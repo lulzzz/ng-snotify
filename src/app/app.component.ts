@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {SnotifyService} from './snotify/snotify/snotify.service';
-import {SnotifyPosition} from './snotify/snotify/snotify-config';
+import {SnotifyService} from './snotify/snotify.service';
+import {SnotifyPosition} from './snotify/snotify-config';
 
 @Component({
   selector: 'app-root',

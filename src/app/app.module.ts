@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import {SnotifyModule} from './snotify/snotify.module';
-import {SnotifyService} from "./snotify/snotify/snotify.service";
+import {SnotifyService} from "./snotify/snotify.service";
 
 @NgModule({
   declarations: [
