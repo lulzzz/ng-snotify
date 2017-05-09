@@ -43,6 +43,10 @@ export class SnotifyComponent implements OnInit, OnDestroy {
   }
 
   setPosition(positions: [SnotifyPosition, SnotifyPosition]) {
+    this.render.removeStyle(this.snotify.nativeElement, 'right');
+    this.render.removeStyle(this.snotify.nativeElement, 'left');
+    this.render.removeStyle(this.snotify.nativeElement, 'bottom');
+    this.render.removeStyle(this.snotify.nativeElement, 'top');
     positions.forEach((position: SnotifyPosition) => {
       switch (position) {
         case SnotifyPosition.RIGHT:
