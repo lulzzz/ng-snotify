@@ -9,8 +9,8 @@ import {SnotifyPosition} from './snotify/snotify-config';
 })
 export class AppComponent implements OnInit {
   title = 'Snotify title!';
-  body = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-  timeout = 1500;
+  body = 'Lorem ipsum dolor sit amet!';
+  timeout = 3000;
   position_a = 1;
   position_b = 2;
   progressBar = true;
