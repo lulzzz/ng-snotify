@@ -92,7 +92,6 @@ export class SnotifyService {
         snotify.body,
         snotify.config || null)
     );
-    console.log(this.notifications);
   }
 
   success(title: string, body: string, config?: SnotifyConfig) {
