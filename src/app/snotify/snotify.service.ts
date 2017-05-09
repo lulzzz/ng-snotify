@@ -8,6 +8,7 @@ import {Snotify} from './snotify';
 @Injectable()
 export class SnotifyService {
   emitter = new Subject<SnotifyToast[]>();
+  optionsChanged = new Subject<SnotifyOptions>();
   transitionDelay = 400;
   config: SnotifyConfig;
   options: SnotifyOptions;
@@ -37,6 +38,7 @@ export class SnotifyService {
   setConfig(config: SnotifyConfig, options?: SnotifyOptions): void {
     this.config = Object.assign(this.config, config);
     this.options = Object.assign(this.options, options);
+    this.optionsChanged.next(this.options);
   }
 
   getConfig(id: number): SnotifyConfig {
