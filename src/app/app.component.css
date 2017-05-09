@@ -1,3 +1,19 @@
-body {
-  background-color: #999;
+header {
+  text-align: center;
+}
+
+header h1 {
+  font-size: 6em;
+}
+
+header h6 {
+  font-size: 1.3em;
+}
+
+textarea{
+   resize: vertical;
+}
+
+.btn-group {
+  margin: 10px 0 20px;
 }
