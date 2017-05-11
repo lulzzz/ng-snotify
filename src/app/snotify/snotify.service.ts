@@ -18,7 +18,8 @@ export class SnotifyService {
     this.config = {
       showProgressBar: true,
       timeout: 1500,
-      closeOnClick: true
+      closeOnClick: true,
+      pauseOnHover: true
     };
     this.options = {
       newOnTop: true,
@@ -73,12 +74,6 @@ export class SnotifyService {
       this.notifications = this.notifications.filter(toast => toast.id !== id);
       this.emmit();
     }, this.transitionDelay);
-  }
-
-  timeout(id: number, timeout: number, callback: () => void) {
-    setTimeout(() => {
-      this.remove(id, callback);
-    }, timeout);
   }
 
   clear() {

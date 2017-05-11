@@ -54,7 +54,7 @@
             <div class="row">
               <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="checkbox">
-                  <label>
+                  <label for="showprogressbar">
                     <input [(ngModel)]="progressBar" type="checkbox" id="showprogressbar">
                     Show progress bar?
                   </label>
@@ -62,7 +62,7 @@
               </div>
               <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="checkbox">
-                  <label>
+                  <label for="closeonclick">
                     <input [(ngModel)]="closeClick" type="checkbox" id="closeonclick">
                     Close on click?
                   </label>
@@ -70,12 +70,20 @@
               </div>
               <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="checkbox">
-                  <label>
-                    <input [(ngModel)]="newTop" type="checkbox" id="newontop">
-                    New on top?
+                  <label for="pauseonhover">
+                    <input [(ngModel)]="pauseHover" type="checkbox" id="pauseonhover">
+                    Pause on hover?
                   </label>
                 </div>
               </div>
+              <div class="col-xs-12 col-sm-6 col-md-4">
+              <div class="checkbox">
+                <label for="newontop">
+                  <input [(ngModel)]="newTop" type="checkbox" id="newontop">
+                  New on top?
+                </label>
+              </div>
+            </div>
             </div>
             <div class="row">
               <div class="col-sm-6 col-sm-offset-3">
