@@ -55,7 +55,8 @@ export class AppComponent implements OnInit {
     this.snotifyService.success(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
-      closeOnClick: this.closeClick
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
     });
   }
   onInfo() {
@@ -63,7 +64,8 @@ export class AppComponent implements OnInit {
     this.snotifyService.info(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
-      closeOnClick: this.closeClick
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
     });
   }
   onError() {
@@ -71,7 +73,8 @@ export class AppComponent implements OnInit {
     this.snotifyService.error(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
-      closeOnClick: this.closeClick
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
     });
   }
   onWarning() {
@@ -79,7 +82,8 @@ export class AppComponent implements OnInit {
     this.snotifyService.warning(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
-      closeOnClick: this.closeClick
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
     });
   }
   onBare() {
@@ -87,7 +91,8 @@ export class AppComponent implements OnInit {
     this.snotifyService.bare(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
-      closeOnClick: this.closeClick
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
     });
   }
 
