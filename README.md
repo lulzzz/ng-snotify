@@ -1,28 +1,166 @@
-# NgSnotify
+# ng-snotify
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.2.
 
-## Development server
+[![Build Status](https://travis-ci.org/artemsky/ng-snotify.svg?branch=master)](https://travis-ci.org/artemsky/ng-snotify)
+[![NPM Version](https://img.shields.io/npm/v/ng-snotify.svg)](https://www.npmjs.com/package/ng-snotify)
+[![NPM Downloads](https://img.shields.io/npm/dt/ng-snotify.svg)](https://www.npmjs.com/package/ng-snotify)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Example
+https://artemsky.github.io/ng-snotify/
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+[![snotify.gif](https://gifyu.com/images/snotify.gif)](https://gifyu.com/image/bKu8)
+_______
 
-## Build
+## Installation
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+To install this library, run:
 
-## Running unit tests
+```bash
+$ npm install ng-snotify -S
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+and then from your Angular `AppModule`:
 
-## Running end-to-end tests
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+import { AppComponent } from './app.component';
 
-## Further help
+// Import your library
+import { SnotifyModule, SnotifyService } from 'ng-snotify';
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+
+    // Import SnotifyModule, also you can try SnotifyModule.forRoot() if you have build errors
+    SnotifyModule
+  ],
+  providers: [SnotifyService],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+Add `app-snotify` component to you root component
+
+```xml
+<!-- You can now use your library component in app.component.html -->
+<app-snotify></app-snotify>
+```
+
+Now you should inject `SnotifyService`
+
+```typescript
+import {Component, OnInit} from '@angular/core';
+
+// Import SnotifyService
+import {SnotifyService} from 'ng-snotify';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  // Inject SnotifyService
+  constructor(private snotifyService: SnotifyService) {}
+
+  //You can set global config like this
+  ngOnInit() {
+    this.snotifyService.setConfig({
+      timeout: 30000
+    }, {
+      newOnTop: false,
+    });
+  }
+
+  //Hopefuly you can add a toast 
+  addToast() {
+    this.snotifyService.error('Example error!', 'Here we are', {
+      closeOnClick: false
+    });
+  }
+
+  //You can remove all toasts from the field
+  clearToasts() {
+    this.snotifyService.clear();
+  }
+}
+
+```
+
+## Configuration
+
+###### Global Cofig (affects all toasts)
+
+`SnotifyService` has method `setConfig`, wich takes 2 parametrs
+
+1 - Object typeof `SnotifyConfig` or `null`
+
+```typescript
+export interface SnotifyConfig {
+  timeout?: number; //default: 1500
+  showProgressBar?: boolean; //default: true
+  type?: SnotifyType; //depends on toast type [success, error, warning, bare, info]
+  closeOnClick?: boolean; //default: true
+  pauseOnHover?: boolean; //default: true
+}
+```
+
+2 - Object typeof `SnotifyOptions` or `null`
+
+```typescript
+export interface SnotifyOptions {
+  maxOnScreen?: number; //default: 8
+  newOnTop?: boolean; //default: true
+  position?: [SnotifyPosition, SnotifyPosition]; //default: Bottom, Right
+  positionOffset?: {horizontal?: string, vertical?: string}; //default: 10px, 10px
+}
+```
+
+###### Toast Cofig (affects current toast)
+
+You can call toast by calling one of 5 methods
+* `success(title: string, body: string, config?: SnotifyConfig)`
+* `warning(title: string, body: string, config?: SnotifyConfig)`
+* `info(title: string, body: string, config?: SnotifyConfig)`
+* `error(title: string, body: string, config?: SnotifyConfig)`
+* `bare(title: string, body: string, config?: SnotifyConfig)`
+```typescript
+snotifyService.success('Example success!', 'Here we are', {
+  timeout: 0, // disable timeout,
+  showProgressBar: true, // won't affect because of timeout, if timeout set to 0. Progress Bar cannot exist anymore
+  closeOnClick: false
+  // One important thing: it is not recommended to change the type in all methods except the bare
+});
+```
+All interfaces can be imported from `ng-snotify`
+
+The best place to set global config is `ngOnInit()`
+
+Once your library is imported, you can use its components, interfaces and service in your Angular application:
+
+## Development
+
+To generate all `*.js`, `*.d.ts` and `*.metadata.json` files:
+
+```bash
+$ npm run build
+```
+
+To lint all `*.ts` files:
+
+```bash
+$ npm run lint
+```
+
+## License
+
+MIT © [artemsky](mailto:mr.artemsky@gmail.com)

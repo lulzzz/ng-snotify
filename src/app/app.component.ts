@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   closeClick = true;
   newTop = true;
   dockMax = 6;
+  pauseHover = true;
   constructor(private snotifyService: SnotifyService) {}
 
   ngOnInit() {
