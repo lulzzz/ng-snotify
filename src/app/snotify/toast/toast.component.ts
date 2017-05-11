@@ -95,6 +95,13 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.render.addClass(this.wrapper.nativeElement, 'snotify-show');
   }
 
+  onEnter() {
+    console.log("11")
+  }
+  onLeave() {
+    console.log("22")
+  }
+
   ngOnDestroy(): void {
     clearInterval(this.interval);
   }

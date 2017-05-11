@@ -7,12 +7,12 @@ import {Snotify} from './snotify';
 
 @Injectable()
 export class SnotifyService {
-  emitter = new Subject<SnotifyToast[]>();
-  optionsChanged = new Subject<SnotifyOptions>();
-  transitionDelay = 400;
-  config: SnotifyConfig;
+  readonly emitter = new Subject<SnotifyToast[]>();
+  readonly optionsChanged = new Subject<SnotifyOptions>();
+  readonly transitionDelay = 400;
+  private config: SnotifyConfig;
   options: SnotifyOptions;
-  notifications: SnotifyToast[] = [];
+  private notifications: SnotifyToast[] = [];
 
   constructor() {
     this.config = {
@@ -67,7 +67,7 @@ export class SnotifyService {
     this.emmit();
   }
 
-  remove(id: number | Date | string, callback: () => void): void {
+  remove(id: number, callback: () => void): void {
     callback();
     setTimeout(() => {
       this.notifications = this.notifications.filter(toast => toast.id !== id);
@@ -75,7 +75,7 @@ export class SnotifyService {
     }, this.transitionDelay);
   }
 
-  timeout(id: number | Date | string, timeout: number, callback: () => void) {
+  timeout(id: number, timeout: number, callback: () => void) {
     setTimeout(() => {
       this.remove(id, callback);
     }, timeout);
