@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SnotifyService} from './snotify/snotify.service';
-import {SnotifyPosition} from './snotify/snotify-config';
+import {SnotifyAction, SnotifyInfo, SnotifyPosition} from './snotify/snotify-config';
+import {SnotifyToast} from './snotify/toast/snotify-toast.model';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,10 @@ export class AppComponent implements OnInit {
       newOnTop: false,
       position: [SnotifyPosition.RIGHT, SnotifyPosition.TOP]
     });
+
+    this.snotifyService.onHoverEnter = (info: SnotifyToast) => {
+      console.log(info);
+    };
   }
 
   setGlobal() {
