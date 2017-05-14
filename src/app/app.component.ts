@@ -130,6 +130,27 @@ export class AppComponent implements OnInit {
     );
   }
 
+  onConfirmation() {
+    this.setGlobal();
+    this.snotifyService.bare(this.title, this.body, {
+      timeout: this.timeout,
+      showProgressBar: this.progressBar,
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
+    });
+  }
+
+  onPrompt() {
+    this.setGlobal();
+    this.snotifyService.bare(this.title, this.body, {
+      timeout: this.timeout,
+      showProgressBar: this.progressBar,
+      closeOnClick: this.closeClick,
+      pauseOnHover: this.pauseHover
+    });
+  }
+
+
   onClear() {
     this.snotifyService.clear();
   }

@@ -63,6 +63,39 @@ textarea{
   margin: 5px 0 0;
 }
 
+.btn-black {
+  color: #f8f8f8;
+  background-color: #2d2d2d;
+  border-color: #000000;
+}
+.btn-black:hover {
+  color: #fff;
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.btn-blue {
+  color: #f8f8f8;
+  background-color: #2095F2;
+  border-color: #1a80d1;
+}
+.btn-blue:hover {
+  color: #fff;
+  background-color: #1a80d1;
+  border-color: #1a80d1;
+}
+
+.btn-teal {
+  color: #f8f8f8;
+  background-color: #009587;
+  border-color: #018175;
+}
+.btn-teal:hover {
+  color: #fff;
+  background-color: #018175;
+  border-color: #018175;
+}
+
 aside {
   position: fixed;
   top: 0;
