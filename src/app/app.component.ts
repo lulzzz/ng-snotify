@@ -29,8 +29,32 @@ export class AppComponent implements OnInit {
       position: [SnotifyPosition.RIGHT, SnotifyPosition.TOP]
     });
 
-    this.snotifyService.onHoverEnter = (info: SnotifyToast) => {
-      console.log(info);
+    this.snotifyService.onInit = (toast: SnotifyToast) => {
+      console.log('on Init', toast);
+    };
+
+    this.snotifyService.onHoverEnter = (toast: SnotifyToast) => {
+      console.log('Hover enter', toast);
+      toast.body = 'Hover enter';
+    };
+
+    this.snotifyService.onHoverLeave = (toast: SnotifyToast) => {
+      console.log('Hover leave', toast);
+      toast.body = 'Hover leave';
+    };
+
+    this.snotifyService.onClick = (toast: SnotifyToast) => {
+      console.log('Clicked', toast);
+      toast.body = 'Clicked';
+    };
+
+    this.snotifyService.beforeDestroy = (toast: SnotifyToast) => {
+      console.log('Before Destroy', toast);
+      toast.body = 'Before Destory';
+    };
+
+    this.snotifyService.afterDestroy = (toast: SnotifyToast) => {
+      console.log('After Destroy', toast);
     };
   }
 

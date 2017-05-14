@@ -16,12 +16,12 @@ export class SnotifyService {
   private notifications: SnotifyToast[] = [];
 
   // Callbacks
-  onInit: (info: SnotifyToast) => void;
-  onClick: (info: SnotifyToast) => void;
-  onHoverEnter: (info: SnotifyToast) => void;
-  onHoverLeave: (info: SnotifyToast) => void;
-  beforeDestroy: (info: SnotifyToast) => void;
-  afterDestroy: (info: SnotifyToast) => void;
+  onInit: (info?: SnotifyToast) => void;
+  onClick: (info?: SnotifyToast) => void;
+  onHoverEnter: (info?: SnotifyToast) => void;
+  onHoverLeave: (info?: SnotifyToast) => void;
+  beforeDestroy: (info?: SnotifyToast) => void;
+  afterDestroy: (info?: SnotifyToast) => void;
 
   static generateRandomId(): number {
     return Math.floor(Math.random() * (Date.now() - 1)) + 1;
