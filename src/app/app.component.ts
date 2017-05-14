@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {SnotifyService} from './snotify/snotify.service';
 import {SnotifyAction, SnotifyInfo, SnotifyPosition} from './snotify/snotify-config';
 import {SnotifyToast} from './snotify/toast/snotify-toast.model';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.snotifyService.setConfig({
-      timeout: 30000
+      timeout: 3000
     }, {
       newOnTop: false,
       position: this.position
@@ -109,6 +110,24 @@ export class AppComponent implements OnInit {
       closeOnClick: this.closeClick,
       pauseOnHover: this.pauseHover
     });
+  }
+
+  onAsyncLoading() {
+    this.snotifyService.async(this.title, this.body,
+      // new Promise((resolve, reject) => {
+      //   setTimeout(() => reject(), 1000);
+      //   setTimeout(() => resolve(), 1500);
+      // })
+      Observable.create(observer => {
+          setTimeout(() => observer.next(), 2000);
+          setTimeout(() => {
+            observer.error();
+            observer.complete();
+          }, 3000);
+
+        }
+      )
+    );
   }
 
   onClear() {

@@ -3,6 +3,9 @@ import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subject} from 'rxjs/Subject';
 import {SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
 import {Snotify} from './snotify';
+import {Observable} from 'rxjs/Observable';
+import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
+import {Subscription} from 'rxjs/Subscription';
 
 
 @Injectable()
@@ -10,6 +13,7 @@ export class SnotifyService {
   readonly emitter = new Subject<SnotifyToast[]>();
   readonly lifecycle = new Subject<SnotifyInfo>();
   readonly optionsChanged = new Subject<SnotifyOptions>();
+  readonly typeChanged = new Subject<{id: number, type: SnotifyType, closeOnClick?: boolean}>();
   readonly transitionDelay = 400;
   private config: SnotifyConfig;
   options: SnotifyOptions;
@@ -90,19 +94,21 @@ export class SnotifyService {
     this.emmit();
   }
 
-  private create(snotify: Snotify) {
-    this.add(new SnotifyToast(SnotifyService.generateRandomId(), snotify.title, snotify.body, snotify.config || null));
+  private create(snotify: Snotify): number {
+    const id = SnotifyService.generateRandomId();
+    this.add(new SnotifyToast(id, snotify.title, snotify.body, snotify.config || null));
+    return id;
   }
 
-  success(title: string, body: string, config?: SnotifyConfig) {
-    this.create({
+  success(title: string, body: string, config?: SnotifyConfig): number {
+    return this.create({
       title: title,
       body: body,
       config: Object.assign({}, config, {type: SnotifyType.SUCCESS})
     });
   }
 
-  error(title: string, body: string, config?: SnotifyConfig) {
+  error(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
@@ -110,7 +116,7 @@ export class SnotifyService {
     });
   }
 
-  info(title: string, body: string, config?: SnotifyConfig) {
+  info(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
@@ -118,7 +124,7 @@ export class SnotifyService {
     });
   }
 
-  warning(title: string, body: string, config?: SnotifyConfig) {
+  warning(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
@@ -126,12 +132,47 @@ export class SnotifyService {
     });
   }
 
-  bare(title: string, body: string, config?: SnotifyConfig) {
+  bare(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
       config: Object.assign({}, config, {type: SnotifyType.BARE})
     });
+  }
+
+  async(title: string, body: string, action: Promise<any> | Observable<any>) {
+    let async: Observable<any>;
+    if (action instanceof Promise) {
+      async = PromiseObservable.create(action);
+    } else {
+      async = action;
+    }
+
+    const id = this.info(title, body, {
+      pauseOnHover: false,
+      closeOnClick: false,
+      timeout: 0,
+      showProgressBar: false
+    });
+
+    const toast = this.get(id);
+    toast.config.type = SnotifyType.ASYNC;
+    this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+
+
+    const subscription: Subscription = async.subscribe(
+      (next) => {
+        toast.config.type = SnotifyType.SUCCESS;
+        this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+      },
+      (error) => {
+        toast.config.type = SnotifyType.ERROR;
+        this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+        subscription.unsubscribe();
+      },
+      () => subscription.unsubscribe()
+    );
+
   }
 
 }

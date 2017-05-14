@@ -28,7 +28,8 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     warning: false,
     error: false,
     info: false,
-    bare: false
+    bare: false,
+    async: true
   };
 
   constructor(private service: SnotifyService, private render: Renderer2, private zone: NgZone) { }
@@ -36,7 +37,18 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.config = this.service.getConfig(this.id);
     this.toast = this.service.get(this.id);
-    this.getType(this.config.type);
+    this.setType(this.config.type);
+    this.service.typeChanged.subscribe(
+      (data) => {
+        if (this.id === data.id) {
+          this.config.type = data.type;
+          this.setType(this.config.type);
+          if (data.closeOnClick) {
+            this.config.closeOnClick = data.closeOnClick;
+          }
+        }
+      }
+    );
 
     if (this.config.timeout > 0) {
       this.startTimeout(0);
@@ -45,7 +57,9 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  getType(type: SnotifyType) {
+  setType(type: SnotifyType) {
+    this.resetTypes();
+
     switch (type) {
       case SnotifyType.SUCCESS:
         this.types.success = true;
@@ -59,10 +73,24 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       case SnotifyType.INFO:
         this.types.info = true;
         break;
+      case SnotifyType.ASYNC:
+        this.types.info = true;
+        this.types.async = true;
+        break;
       default:
         this.types.bare = true;
         break;
     }
+  }
+
+  resetTypes() {
+    this.types.info =
+    this.types.error =
+    this.types.warning =
+    this.types.bare =
+    this.types.success =
+    this.types.async =
+      false;
   }
 
   ngAfterViewInit() {
@@ -92,6 +120,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       clearInterval(this.interval);
     }
   }
+
   onLeave() {
     if (this.config.pauseOnHover) {
       this.startTimeout(this.progress);

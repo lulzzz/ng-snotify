@@ -21,3 +21,22 @@
 .snotify-icon__success {
   fill: #c8e6c9;
 }
+
+.snotify-icon__async {
+  fill: #bbdefb;
+  animation: async 3s infinite linear;
+  transform-origin: 50% 50%;
+}
+
+
+@keyframes async {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+

@@ -56,9 +56,11 @@ footer a {
 textarea{
    resize: vertical;
 }
-
+.buttons {
+  margin: 20px 0;
+}
 .btn-group {
-  margin: 10px 0 20px;
+  margin: 5px 0 0;
 }
 
 aside {

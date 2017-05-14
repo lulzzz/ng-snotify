@@ -68,14 +68,18 @@
     </label>
     <input [(ngModel)]="dockMax" type="number" id="dockMax" class="form-control">
 
-  </div>
-  <div class="text-center">
-    <div class="btn-group">
-      <div class="btn btn-success" (click)="onSuccess()">Success</div>
-      <div class="btn btn-info" (click)="onInfo()">Info</div>
-      <div class="btn btn-danger" (click)="onError()">Error</div>
-      <div class="btn btn-warning" (click)="onWarning()">Warning</div>
-      <div class="btn btn-default" (click)="onBare()">Bare</div>
+    <div class="buttons">
+      <div class="btn-group btn-group-justified">
+        <div class="btn btn-success" (click)="onSuccess()">Success</div>
+        <div class="btn btn-info" (click)="onInfo()">Info</div>
+        <div class="btn btn-danger" (click)="onError()">Error</div>
+        <div class="btn btn-warning" (click)="onWarning()">Warning</div>
+
+      </div>
+      <div class="btn-group btn-group-justified">
+        <div class="btn btn-default" (click)="onBare()">Bare</div>
+        <div class="btn btn-success" (click)="onAsyncLoading()">Async</div>
+      </div>
     </div>
   </div>
 

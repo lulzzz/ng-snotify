@@ -4,7 +4,8 @@ export enum SnotifyType {
   ERROR,
   WARNING,
   INFO,
-  BARE
+  BARE,
+  ASYNC
 }
 
 export enum SnotifyPosition {
