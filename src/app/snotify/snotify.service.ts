@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subject} from 'rxjs/Subject';
-import {SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
+import {SnotifyAsync, SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
 import {Snotify} from './snotify';
 import {Observable} from 'rxjs/Observable';
 import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
@@ -13,7 +13,7 @@ export class SnotifyService {
   readonly emitter = new Subject<SnotifyToast[]>();
   readonly lifecycle = new Subject<SnotifyInfo>();
   readonly optionsChanged = new Subject<SnotifyOptions>();
-  readonly typeChanged = new Subject<{id: number, type: SnotifyType, closeOnClick?: boolean}>();
+  readonly toastChanged = new Subject<SnotifyToast>();
   readonly transitionDelay = 400;
   private config: SnotifyConfig;
   options: SnotifyOptions;
@@ -29,6 +29,15 @@ export class SnotifyService {
 
   static generateRandomId(): number {
     return Math.floor(Math.random() * (Date.now() - 1)) + 1;
+  }
+
+  /**
+   * Simple is object check.
+   * @param item
+   * @returns {boolean}
+   */
+  static isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
   }
 
   constructor() {
@@ -136,11 +145,11 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.BARE})
+      config: Object.assign({}, config)
     });
   }
 
-  async(title: string, body: string, action: Promise<any> | Observable<any>) {
+  async(title: string, body: string, action: Promise<SnotifyAsync> | Observable<SnotifyAsync>) {
     let async: Observable<any>;
     if (action instanceof Promise) {
       async = PromiseObservable.create(action);
@@ -148,31 +157,64 @@ export class SnotifyService {
       async = action;
     }
 
-    const id = this.info(title, body, {
+    const id = this.bare(title, body, {
       pauseOnHover: false,
       closeOnClick: false,
       timeout: 0,
-      showProgressBar: false
+      showProgressBar: false,
+      type: SnotifyType.ASYNC
     });
 
     const toast = this.get(id);
-    toast.config.type = SnotifyType.ASYNC;
-    this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+    let latestToast = Object.assign({}, toast);
 
+    const updateToast = (type: SnotifyType, data?: SnotifyAsync) => {
+      if (!data) {
+        latestToast = this.merge(toast, latestToast, {config: {type: type}}) as SnotifyToast;
+      } else {
+        latestToast = this.merge(toast, data, {config: {type: type}}) as SnotifyToast;
+      }
+
+      this.toastChanged.next(latestToast);
+    };
 
     const subscription: Subscription = async.subscribe(
-      (next) => {
-        toast.config.type = SnotifyType.SUCCESS;
-        this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+      (next?: SnotifyAsync) => {
+        updateToast(SnotifyType.ASYNC, next);
       },
-      (error) => {
-        toast.config.type = SnotifyType.ERROR;
-        this.typeChanged.next({id, type: toast.config.type, closeOnClick: true});
+      (error?: SnotifyAsync) => {
+        updateToast(SnotifyType.ERROR, error);
         subscription.unsubscribe();
       },
-      () => subscription.unsubscribe()
+      () => {
+        updateToast(SnotifyType.SUCCESS);
+        subscription.unsubscribe();
+      }
     );
 
+  }
+
+  merge (...argumen: any[]) {
+    const newObject = {};
+    let src;
+    const args = [].splice.call(argumen, 0);
+
+    while (args.length > 0) {
+      src = args.splice(0, 1)[0];
+      if (toString.call(src) === '[object Object]') {
+        for (const p in src) {
+          if (src.hasOwnProperty(p)) {
+            if (toString.call(src[p]) === '[object Object]') {
+              newObject[p] = this.merge(newObject[p] || {}, src[p]);
+            } else {
+              newObject[p] = src[p];
+            }
+          }
+        }
+      }
+    }
+
+    return newObject;
   }
 
 }

@@ -119,11 +119,31 @@ export class AppComponent implements OnInit {
       //   setTimeout(() => resolve(), 1500);
       // })
       Observable.create(observer => {
-          setTimeout(() => observer.next(), 2000);
           setTimeout(() => {
-            observer.error();
-            observer.complete();
-          }, 3000);
+            observer.next({
+              body: 'Still loading.....',
+            });
+            }, 1000);
+
+        setTimeout(() => {
+          observer.next({
+            title: 'Success',
+            body: 'Example. Data loaded!',
+            config: {
+              closeOnClick: true,
+              timeout: 5000,
+              showProgressBar: true
+            }
+          });
+          observer.complete();
+        }, 3000);
+
+          // setTimeout(() => {
+          //   observer.error({
+          //     title: 'Error',
+          //     body: 'Example. Error 404. Service not found',
+          //   });
+          // }, 6000);
 
         }
       )

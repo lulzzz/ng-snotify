@@ -9,7 +9,7 @@
   }"
      (click)="onClick()" (mouseenter)="onEnter()" (mouseleave)="onLeave()" #wrapper>
   <div class="snotify-toast__inner">
-    <div class="snotify-progress-bar" *ngIf="config.showProgressBar">
+    <div class="snotify-progress-bar" *ngIf="toast.config.showProgressBar">
       <span class="snotify-progress-bar__line" #progress></span>
     </div>
     <div class="snotify-title">{{toast.title}}</div>

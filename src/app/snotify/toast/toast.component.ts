@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import {SnotifyService} from '../snotify.service';
 import {SnotifyToast} from './snotify-toast.model';
-import {SnotifyAction, SnotifyConfig, SnotifyType} from '../snotify-config';
+import {SnotifyAction, SnotifyType} from '../snotify-config';
 
 @Component({
   selector: 'app-snotify-toast',
@@ -12,15 +12,13 @@ import {SnotifyAction, SnotifyConfig, SnotifyType} from '../snotify-config';
   styleUrls: ['./toast.component.css']
 })
 export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() id: number;
+  @Input() toast: SnotifyToast;
   @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChild('progress') progressBar: ElementRef;
-  config: SnotifyConfig;
 
   frameRate = 10;
 
   progress: number;
-  toast: SnotifyToast;
   interval: any;
 
   types = {
@@ -35,25 +33,29 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private service: SnotifyService, private render: Renderer2, private zone: NgZone) { }
 
   ngOnInit() {
-    this.config = this.service.getConfig(this.id);
-    this.toast = this.service.get(this.id);
-    this.setType(this.config.type);
-    this.service.typeChanged.subscribe(
-      (data) => {
-        if (this.id === data.id) {
-          this.config.type = data.type;
-          this.setType(this.config.type);
-          if (data.closeOnClick) {
-            this.config.closeOnClick = data.closeOnClick;
-          }
+    this.initToast();
+    this.service.toastChanged.subscribe(
+      (toast: SnotifyToast) => {
+        if (this.toast.id === toast.id) {
+          this.initToast(toast);
         }
       }
     );
+  }
 
-    if (this.config.timeout > 0) {
+  initToast(toast?: SnotifyToast) {
+    if (toast) {
+      if (this.toast.config.type !== toast.config.type) {
+        clearInterval(this.interval);
+      }
+      this.toast = toast;
+    }
+
+    this.setType(this.toast.config.type);
+    if (this.toast.config.timeout > 0) {
       this.startTimeout(0);
     } else {
-      this.config.showProgressBar = false;
+      this.toast.config.showProgressBar = false;
     }
   }
 
@@ -99,8 +101,8 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onClick() {
     this.lifecycle(SnotifyAction.onClick);
-    if (this.config.closeOnClick) {
-      this.service.remove(this.id, this.onRemove.bind(this));
+    if (this.toast.config.closeOnClick) {
+      this.service.remove(this.toast.id, this.onRemove.bind(this));
     }
   }
 
@@ -116,13 +118,13 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onEnter() {
     this.lifecycle(SnotifyAction.onHoverEnter);
-    if (this.config.pauseOnHover) {
+    if (this.toast.config.pauseOnHover) {
       clearInterval(this.interval);
     }
   }
 
   onLeave() {
-    if (this.config.pauseOnHover) {
+    if (this.toast.config.pauseOnHover) {
       this.startTimeout(this.progress);
     }
     this.lifecycle(SnotifyAction.onHoverLeave);
@@ -130,17 +132,17 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   startTimeout(currentProgress: number) {
     this.progress = currentProgress;
-    const step = this.frameRate / this.config.timeout * 100;
+    const step = this.frameRate / this.toast.config.timeout * 100;
     this.zone.runOutsideAngular(() => {
       this.interval = setInterval(() => {
         this.progress += step;
         if (this.progress >= 100) {
           this.zone.run(() => {
             clearInterval(this.interval);
-            this.service.remove(this.id, this.onRemove.bind(this));
+            this.service.remove(this.toast.id, this.onRemove.bind(this));
           });
         }
-        if (this.config.showProgressBar) {
+        if (this.toast.config.showProgressBar) {
           this.drawProgressBar(this.progress);
         }
       }, this.frameRate);

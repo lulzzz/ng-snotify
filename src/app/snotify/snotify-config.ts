@@ -50,3 +50,9 @@ export interface SnotifyInfo {
   action: SnotifyAction;
   toast: SnotifyToast;
 }
+
+export interface SnotifyAsync {
+  title?: string;
+  body?: string;
+  config?: SnotifyConfig;
+}
