@@ -120,8 +120,7 @@ export interface SnotifyConfig {
 export interface SnotifyOptions {
   maxOnScreen?: number; //default: 8
   newOnTop?: boolean; //default: true
-  position?: [SnotifyPosition, SnotifyPosition]; //default: Bottom, Right
-  positionOffset?: {horizontal?: string, vertical?: string}; //default: 10px, 10px
+  position?: SnotifyPosition; //default: right_bottom
 }
 ```
 
