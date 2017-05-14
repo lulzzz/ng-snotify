@@ -30,17 +30,13 @@ export class SnotifyService {
   constructor() {
     this.config = {
       showProgressBar: true,
-      timeout: 1500,
+      timeout: 2000,
       closeOnClick: true,
       pauseOnHover: true
     };
     this.options = {
       newOnTop: true,
-      position: [SnotifyPosition.BOTTOM, SnotifyPosition.RIGHT],
-      positionOffset: {
-        horizontal: '10px',
-        vertical: '10px'
-      },
+      position: SnotifyPosition.right_bottom,
       maxOnScreen: 8
     };
   }
@@ -68,11 +64,11 @@ export class SnotifyService {
     return this.notifications.find(toast => toast.id === id);
   }
 
-  getAll(): SnotifyToast[] {
+  private getAll(): SnotifyToast[] {
     return this.notifications.slice();
   }
 
-  add(toast: SnotifyToast): void {
+  private add(toast: SnotifyToast): void {
     if (this.options.newOnTop) {
       this.notifications.unshift(toast);
     } else {
@@ -94,7 +90,7 @@ export class SnotifyService {
     this.emmit();
   }
 
-  create(snotify: Snotify) {
+  private create(snotify: Snotify) {
     this.add(new SnotifyToast(SnotifyService.generateRandomId(), snotify.title, snotify.body, snotify.config || null));
   }
 

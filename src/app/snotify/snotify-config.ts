@@ -8,10 +8,17 @@ export enum SnotifyType {
 }
 
 export enum SnotifyPosition {
-  TOP = 0,
-  BOTTOM = 1,
-  LEFT = 3,
-  RIGHT = 2,
+  left_top = 0,
+  left_center = 1,
+  left_bottom = 2,
+
+  right_top = 3,
+  right_center = 4,
+  right_bottom = 5,
+
+  center_top = 6,
+  center_center = 7,
+  center_bottom = 8
 }
 
 export enum SnotifyAction {
@@ -35,8 +42,7 @@ export interface SnotifyConfig {
 export interface SnotifyOptions {
   maxOnScreen?: number;
   newOnTop?: boolean;
-  position?: [SnotifyPosition, SnotifyPosition];
-  positionOffset?: {horizontal?: string, vertical?: string};
+  position?: SnotifyPosition;
 }
 
 export interface SnotifyInfo {

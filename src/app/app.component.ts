@@ -12,8 +12,7 @@ export class AppComponent implements OnInit {
   title = 'Snotify title!';
   body = 'Lorem ipsum dolor sit amet!';
   timeout = 3000;
-  position_a = 1;
-  position_b = 2;
+  position = SnotifyPosition.right_bottom;
   progressBar = true;
   closeClick = true;
   newTop = true;
@@ -26,7 +25,7 @@ export class AppComponent implements OnInit {
       timeout: 30000
     }, {
       newOnTop: false,
-      position: [SnotifyPosition.RIGHT, SnotifyPosition.TOP]
+      position: this.position
     });
 
     this.snotifyService.onInit = (toast: SnotifyToast) => {
@@ -61,22 +60,9 @@ export class AppComponent implements OnInit {
   setGlobal() {
     this.snotifyService.setConfig(null, {
       newOnTop: this.newTop,
-      position: [this.getPosition(this.position_b), this.getPosition(this.position_a)],
+      position: this.position,
       maxOnScreen: this.dockMax
     });
-  }
-
-  getPosition(position) {
-    switch (parseInt(position, 10)) {
-      case 0:
-        return SnotifyPosition.TOP;
-      case 1:
-        return SnotifyPosition.BOTTOM;
-      case 2:
-        return SnotifyPosition.RIGHT;
-      case 3:
-        return SnotifyPosition.LEFT;
-    }
   }
 
   onSuccess() {
