@@ -40,6 +40,29 @@ export class SnotifyService {
     return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
   }
 
+  static merge (...objects: any[]) {
+    const newObject = {};
+    let src;
+    const objectsArray = [].splice.call(objects, 0);
+
+    while (objectsArray.length > 0) {
+      src = objectsArray.splice(0, 1)[0];
+      if (SnotifyService.isObject(src)) {
+        for (const property in src) {
+          if (src.hasOwnProperty(property)) {
+            if (SnotifyService.isObject(src[property])) {
+              newObject[property] = SnotifyService.merge(newObject[property] || {}, src[property]);
+            } else {
+              newObject[property] = src[property];
+            }
+          }
+        }
+      }
+    }
+
+    return newObject;
+  }
+
   constructor() {
     this.config = {
       showProgressBar: true,
@@ -62,15 +85,6 @@ export class SnotifyService {
     this.config = Object.assign(this.config, config);
     this.options = Object.assign(this.options, options);
     this.optionsChanged.next(this.options);
-  }
-
-  getConfig(id: number): SnotifyConfig {
-    const config = this.get(id).config;
-    if (config) {
-      return Object.assign({}, this.config, config);
-    } else {
-      return Object.assign({}, this.config);
-    }
   }
 
   get(id: number): SnotifyToast {
@@ -170,9 +184,9 @@ export class SnotifyService {
 
     const updateToast = (type: SnotifyType, data?: SnotifyAsync) => {
       if (!data) {
-        latestToast = this.merge(toast, latestToast, {config: {type: type}}) as SnotifyToast;
+        latestToast = SnotifyService.merge(toast, latestToast, {config: {type: type}}) as SnotifyToast;
       } else {
-        latestToast = this.merge(toast, data, {config: {type: type}}) as SnotifyToast;
+        latestToast = SnotifyService.merge(toast, data, {config: {type: type}}) as SnotifyToast;
       }
 
       this.toastChanged.next(latestToast);
@@ -192,29 +206,6 @@ export class SnotifyService {
       }
     );
 
-  }
-
-  merge (...objects: any[]) {
-    const newObject = {};
-    let src;
-    const objectsArray = [].splice.call(objects, 0);
-
-    while (objectsArray.length > 0) {
-      src = objectsArray.splice(0, 1)[0];
-      if (SnotifyService.isObject(src)) {
-        for (const property in src) {
-          if (src.hasOwnProperty(property)) {
-            if (SnotifyService.isObject(src[property])) {
-              newObject[property] = this.merge(newObject[property] || {}, src[property]);
-            } else {
-              newObject[property] = src[property];
-            }
-          }
-        }
-      }
-    }
-
-    return newObject;
   }
 
 }
