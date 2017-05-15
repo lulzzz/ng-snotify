@@ -103,6 +103,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lifecycle(SnotifyAction.onClick);
     if (this.toast.config.closeOnClick) {
       this.service.remove(this.toast.id, this.onRemove.bind(this));
+      clearInterval(this.interval);
     }
   }
 
