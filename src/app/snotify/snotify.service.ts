@@ -194,20 +194,20 @@ export class SnotifyService {
 
   }
 
-  merge (...argumen: any[]) {
+  merge (...objects: any[]) {
     const newObject = {};
     let src;
-    const args = [].splice.call(argumen, 0);
+    const objectsArray = [].splice.call(objects, 0);
 
-    while (args.length > 0) {
-      src = args.splice(0, 1)[0];
-      if (toString.call(src) === '[object Object]') {
-        for (const p in src) {
-          if (src.hasOwnProperty(p)) {
-            if (toString.call(src[p]) === '[object Object]') {
-              newObject[p] = this.merge(newObject[p] || {}, src[p]);
+    while (objectsArray.length > 0) {
+      src = objectsArray.splice(0, 1)[0];
+      if (SnotifyService.isObject(src)) {
+        for (const property in src) {
+          if (src.hasOwnProperty(property)) {
+            if (SnotifyService.isObject(src[property])) {
+              newObject[property] = this.merge(newObject[property] || {}, src[property]);
             } else {
-              newObject[p] = src[p];
+              newObject[property] = src[property];
             }
           }
         }
