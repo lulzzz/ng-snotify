@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
 import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subject} from 'rxjs/Subject';
-import {SnotifyAsync, SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
+import {
+  SnotifyAsync, SnotifyConfig, SnotifyButtons, SnotifyInfo, SnotifyOptions, SnotifyPosition,
+  SnotifyType
+} from './snotify-config';
 import {Snotify} from './snotify';
 import {Observable} from 'rxjs/Observable';
 import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
@@ -160,6 +163,25 @@ export class SnotifyService {
       title: title,
       body: body,
       config: Object.assign({}, config)
+    });
+  }
+
+  confirm(title: string, body: string, config: SnotifyConfig): number {
+    const buttonKeys = Object.keys(config.buttons);
+    const resultButtons = {
+      yes: {
+        text: buttonKeys[0],
+        action: config.buttons[buttonKeys[0]]
+      },
+      no: {
+        text: buttonKeys[1],
+        action: config.buttons[buttonKeys[1]]
+      }
+    };
+    return this.create({
+      title: title,
+      body: body,
+      config: Object.assign({}, config, {type: SnotifyType.CONFIRM}, {buttons: resultButtons})
     });
   }
 

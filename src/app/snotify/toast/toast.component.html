@@ -5,7 +5,8 @@
     'snotify-warning': types.warning,
     'snotify-info': types.info,
     'snotify-error': types.error,
-    'snotify-bare': types.bare
+    'snotify-bare': types.bare,
+    'snotify-confirm': types.confirm
   }"
      (click)="onClick()" (mouseenter)="onEnter()" (mouseleave)="onLeave()" #wrapper>
   <div class="snotify-toast__inner">
@@ -15,5 +16,9 @@
     <div class="snotify-title">{{toast.title}}</div>
     <div class="snotify-body">{{toast.body}}</div>
     <app-icon class="snotify-icon" [types]="types"></app-icon>
+  </div>
+  <div *ngIf="toast.config.buttons" class="snotify-buttons">
+    <button (click)="toast.config.buttons.yes.action()">{{toast.config.buttons.yes.text}}</button>
+    <button (click)="toast.config.buttons.no.action()">{{toast.config.buttons.no.text}}</button>
   </div>
 </div>

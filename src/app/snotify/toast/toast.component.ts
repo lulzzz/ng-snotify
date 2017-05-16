@@ -27,12 +27,15 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     error: false,
     info: false,
     bare: false,
-    async: true
+    async: false,
+    confirm: false,
+    prompt: false,
   };
 
   constructor(private service: SnotifyService, private render: Renderer2, private zone: NgZone) { }
 
   ngOnInit() {
+    console.log(this.toast);
     this.initToast();
     this.service.toastChanged.subscribe(
       (toast: SnotifyToast) => {
@@ -79,6 +82,12 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
         this.types.info = true;
         this.types.async = true;
         break;
+      case SnotifyType.CONFIRM:
+        this.types.confirm = true;
+        break;
+      case SnotifyType.PROMPT:
+        this.types.prompt = true;
+        break;
       default:
         this.types.bare = true;
         break;
@@ -92,6 +101,8 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.types.bare =
     this.types.success =
     this.types.async =
+    this.types.confirm =
+    this.types.prompt =
       false;
   }
 
@@ -130,6 +141,11 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.lifecycle(SnotifyAction.onHoverLeave);
   }
+
+  onPrompt() {
+
+  }
+
 
   startTimeout(currentProgress: number) {
     this.progress = currentProgress;

@@ -66,6 +66,7 @@
 }
 
 .snotify-body {
+  color: #FFFFFF;
   font-size: 1em;
 }
 
@@ -136,3 +137,61 @@
 .snotify-error .snotify-body {
   color: #ffebee;
 }
+
+/*Confirm*/
+.snotify-confirm {
+  background-color: #009688;
+}
+
+.snotify-confirm .snotify-progress-bar {
+  background-color: #4db6ac;
+}
+
+.snotify-confirm .snotify-progress-bar__line {
+  background-color: #80cbc4;
+}
+
+.snotify-confirm .snotify-body {
+  color: #e0f2f1;
+}
+
+
+/* Buttons */
+
+.snotify-buttons {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0,0,0,.1);
+}
+
+.snotify-buttons button {
+  position: relative;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+.snotify-buttons button:hover,
+.snotify-buttons button:focus {
+  background: rgba(0,0,0,.1);
+  outline: none;
+}
+
+.snotify-buttons button:active {
+  background: rgba(0,0,0,.5);
+}
+
+.snotify-buttons button:last-child::before {
+  content: '';
+  width: 2px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  background-color: rgba(0,0,0,.1);
+}
+

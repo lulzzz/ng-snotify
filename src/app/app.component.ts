@@ -152,11 +152,15 @@ export class AppComponent implements OnInit {
 
   onConfirmation() {
     this.setGlobal();
-    this.snotifyService.bare(this.title, this.body, {
+    this.snotifyService.confirm(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
-      pauseOnHover: this.pauseHover
+      pauseOnHover: this.pauseHover,
+      buttons: {
+        yes: () => console.log('Click: Ok'),
+        'No! Never!': () => console.log('Click: No! Never!'),
+      }
     });
   }
 

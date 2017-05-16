@@ -5,7 +5,9 @@ export enum SnotifyType {
   WARNING,
   INFO,
   BARE,
-  ASYNC
+  ASYNC,
+  CONFIRM,
+  PROMPT
 }
 
 export enum SnotifyPosition {
@@ -38,6 +40,7 @@ export interface SnotifyConfig {
   type?: SnotifyType;
   closeOnClick?: boolean;
   pauseOnHover?: boolean;
+  buttons?: SnotifyButtons;
 }
 
 export interface SnotifyOptions {
@@ -55,4 +58,8 @@ export interface SnotifyAsync {
   title?: string;
   body?: string;
   config?: SnotifyConfig;
+}
+
+export interface SnotifyButtons  {
+  [param: string]: () => void;
 }
