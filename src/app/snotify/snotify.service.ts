@@ -166,6 +166,7 @@ export class SnotifyService {
     });
   }
   // TODO: Apply defaults if button not set
+  // TODO: Bold - Normal buttons
   confirm(title: string, body: string, config: SnotifyConfig): number {
     const buttonKeys = Object.keys(config.buttons);
     const resultButtons = {
@@ -185,6 +186,7 @@ export class SnotifyService {
     });
   }
   // TODO: Apply defaults if button not set
+  // TODO: Bold - Normal buttons
   prompt(title: string, body: string, config: SnotifyConfig): number {
     const buttonKeys = Object.keys(config.buttons);
     const resultButtons = {

@@ -145,10 +145,6 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lifecycle(SnotifyAction.onHoverLeave);
   }
 
-  onPrompt() {
-
-  }
-
   onPromptEnter() {
     this.promptActive = true;
   }
