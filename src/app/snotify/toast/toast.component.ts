@@ -9,7 +9,7 @@ import {SnotifyAction, SnotifyType} from '../snotify-config';
 @Component({
   selector: 'app-snotify-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.css']
+  styleUrls: ['./toast.component.scss']
 })
 export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() toast: SnotifyToast;
@@ -123,11 +123,11 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onRemove() {
     this.lifecycle(SnotifyAction.beforeDestroy);
-    this.render.addClass(this.wrapper.nativeElement, 'snotify-remove');
+    this.render.addClass(this.wrapper.nativeElement, 'snotifyToast-remove');
   }
 
   onShow() {
-    this.render.addClass(this.wrapper.nativeElement, 'snotify-show');
+    this.render.addClass(this.wrapper.nativeElement, 'snotifyToast-show');
     this.lifecycle(SnotifyAction.onInit);
   }
 

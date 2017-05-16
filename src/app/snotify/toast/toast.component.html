@@ -1,5 +1,5 @@
 <div
-  class="snotify-toast"
+  class="snotifyToast"
   [ngClass]="{
     'snotify-success': types.success,
     'snotify-warning': types.warning,
@@ -10,21 +10,21 @@
     'snotify-prompt': types.prompt
   }"
      (click)="onClick()" (mouseenter)="onEnter()" (mouseleave)="onLeave()" #wrapper>
-  <div class="snotify-toast__inner">
-    <div class="snotify-progress-bar" *ngIf="toast.config.showProgressBar">
-      <span class="snotify-progress-bar__line" #progress></span>
+  <div class="snotifyToast__inner">
+    <div class="snotifyToast__progressBar" *ngIf="toast.config.showProgressBar">
+      <span class="snotifyToast__progressBar__percentage" #progress></span>
     </div>
-    <div class="snotify-title">{{toast.title}}</div>
-    <div *ngIf="!types.prompt" class="snotify-body">{{toast.body}}</div>
+    <div class="snotifyToast__title">{{toast.title}}</div>
+    <div *ngIf="!types.prompt" class="snotifyToast__body">{{toast.body}}</div>
     <span *ngIf="types.prompt" class="input input--jiro" [ngClass]="{'input--filled': promptActive}" (mouseenter)="onPromptEnter()" (mouseleave)="onPromptLeave()">
         <input #input class="input__field" type="text" id="input-11" (focus)="isPromptFocused = true" (blur)="isPromptFocused = false"/>
         <label class="input__label" for="input-11" >
-          <span class="input__label-content">{{toast.body}}</span>
+          <span class="input__labelContent">{{toast.body}}</span>
         </label>
       </span>
     <app-icon class="snotify-icon" [types]="types"></app-icon>
   </div>
-  <div *ngIf="toast.config.buttons" class="snotify-buttons">
+  <div *ngIf="toast.config.buttons" class="snotifyToast__buttons">
     <button *ngIf="!types.prompt"(click)="toast.config.buttons.yes.action()">{{toast.config.buttons.yes.text}}</button>
     <button *ngIf="types.prompt"(click)="toast.config.buttons.yes.action(input.nativeElement.value)" >{{toast.config.buttons.yes.text}}</button>
     <button (click)="toast.config.buttons.no.action()">{{toast.config.buttons.no.text}}</button>

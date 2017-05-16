@@ -7,7 +7,7 @@ import {SnotifyAction, SnotifyInfo, SnotifyOptions, SnotifyPosition} from './sno
 @Component({
   selector: 'app-snotify',
   templateUrl: './snotify.component.html',
-  styleUrls: ['./snotify.component.css']
+  styleUrls: ['./snotify.component.scss']
 })
 export class SnotifyComponent implements OnInit, OnDestroy {
   notifications: SnotifyToast[];
