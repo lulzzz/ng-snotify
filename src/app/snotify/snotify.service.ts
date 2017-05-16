@@ -165,7 +165,7 @@ export class SnotifyService {
       config: Object.assign({}, config)
     });
   }
-
+  // TODO: Apply defaults if button not set
   confirm(title: string, body: string, config: SnotifyConfig): number {
     const buttonKeys = Object.keys(config.buttons);
     const resultButtons = {
@@ -181,7 +181,26 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.CONFIRM}, {buttons: resultButtons})
+      config: Object.assign({}, config, {type: SnotifyType.CONFIRM}, {buttons: resultButtons, closeOnClick: false})
+    });
+  }
+  // TODO: Apply defaults if button not set
+  prompt(title: string, body: string, config: SnotifyConfig): number {
+    const buttonKeys = Object.keys(config.buttons);
+    const resultButtons = {
+      yes: {
+        text: buttonKeys[0],
+        action: config.buttons[buttonKeys[0]]
+      },
+      no: {
+        text: buttonKeys[1],
+        action: config.buttons[buttonKeys[1]]
+      }
+    };
+    return this.create({
+      title: title,
+      body: body,
+      config: Object.assign({}, config, {type: SnotifyType.PROMPT}, {buttons: resultButtons, timeout: 0, closeOnClick: false})
     });
   }
 

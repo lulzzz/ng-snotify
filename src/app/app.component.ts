@@ -166,11 +166,15 @@ export class AppComponent implements OnInit {
 
   onPrompt() {
     this.setGlobal();
-    this.snotifyService.bare(this.title, this.body, {
+    this.snotifyService.prompt(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
-      pauseOnHover: this.pauseHover
+      pauseOnHover: this.pauseHover,
+      buttons: {
+        'OK': (text) => console.log('User said: ' + text),
+        'NO': () => console.log('Click: No! Never!'),
+      }
     });
   }
 

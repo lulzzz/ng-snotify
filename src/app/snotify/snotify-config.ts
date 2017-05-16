@@ -61,5 +61,5 @@ export interface SnotifyAsync {
 }
 
 export interface SnotifyButtons  {
-  [param: string]: () => void;
+  [param: string]: (yes?: string) => void;
 }

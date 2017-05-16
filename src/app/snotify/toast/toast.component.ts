@@ -15,6 +15,9 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() toast: SnotifyToast;
   @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChild('progress') progressBar: ElementRef;
+  @ViewChild('input') input: ElementRef;
+  promptActive = false;
+  isPromptFocused = false;
 
   frameRate = 10;
 
@@ -146,6 +149,15 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  onPromptEnter() {
+    this.promptActive = true;
+  }
+
+  onPromptLeave() {
+    if (!this.input.nativeElement.value.length && !this.isPromptFocused) {
+      this.promptActive = false;
+    }
+  }
 
   startTimeout(currentProgress: number) {
     this.progress = currentProgress;
