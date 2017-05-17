@@ -1,10 +1,10 @@
 import {SnotifyToast} from './toast/snotify-toast.model';
 export enum SnotifyType {
+  SIMPLE,
   SUCCESS,
   ERROR,
   WARNING,
   INFO,
-  BARE,
   ASYNC,
   CONFIRM,
   PROMPT
@@ -47,6 +47,7 @@ export interface SnotifyOptions {
   maxOnScreen?: number;
   newOnTop?: boolean;
   position?: SnotifyPosition;
+  transition?: number;
 }
 
 export interface SnotifyInfo {

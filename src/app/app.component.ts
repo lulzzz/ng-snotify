@@ -104,7 +104,7 @@ export class AppComponent implements OnInit {
   }
   onBare() {
     this.setGlobal();
-    this.snotifyService.bare(this.title, this.body, {
+    this.snotifyService.simple(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
@@ -136,7 +136,7 @@ export class AppComponent implements OnInit {
             }
           });
           observer.complete();
-        }, 3000);
+        }, 30000);
 
           // setTimeout(() => {
           //   observer.error({

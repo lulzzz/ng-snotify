@@ -1,7 +1,4 @@
-import {
-  AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, Renderer2,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SnotifyService} from '../snotify.service';
 import {SnotifyToast} from './snotify-toast.model';
 import {SnotifyAction, SnotifyType} from '../snotify-config';
@@ -13,15 +10,22 @@ import {SnotifyAction, SnotifyType} from '../snotify-config';
 })
 export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() toast: SnotifyToast;
-  @ViewChild('wrapper') wrapper: ElementRef;
-  @ViewChild('progress') progressBar: ElementRef;
-  @ViewChild('input') input: ElementRef;
-  promptActive = false;
-  isPromptFocused = false;
+  state = {
+    toast: {
+      progress: 0,
+      isShowing: false,
+      isRemoving: false,
+      isDestroying: false
+    },
+    prompt: {
+      input: '',
+      isPromptFocused: false,
+      isPromptActive: false
+    }
+  };
 
-  frameRate = 10;
-
-  progress: number;
+  transitionTime = 400;
+  refreshRate = 10;
   interval: any;
 
   types = {
@@ -29,17 +33,22 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     warning: false,
     error: false,
     info: false,
-    bare: false,
+    simple: false,
     async: false,
     confirm: false,
     prompt: false,
   };
 
-  constructor(private service: SnotifyService, private render: Renderer2, private zone: NgZone) { }
+  constructor(private service: SnotifyService) { }
+
+  /*
+  Life cycles
+   */
 
   ngOnInit() {
-    console.log(this.toast);
+    this.transitionTime = this.service.options.transition;
     this.initToast();
+    console.log(this.types)
     this.service.toastChanged.subscribe(
       (toast: SnotifyToast) => {
         if (this.toast.id === toast.id) {
@@ -47,8 +56,79 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
+
+    this.service.toastDeleted.subscribe(
+      (id) => {
+        if (this.toast.id === id) {
+          this.onRemove().then(() => {
+            this.service.remove(id, false);
+          });
+        }
+      }
+    );
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => this.onShow(), 50);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycle(SnotifyAction.afterDestroy);
+  }
+
+  /*
+  Event hooks
+   */
+
+  onClick() {
+    this.lifecycle(SnotifyAction.onClick);
+    if (this.toast.config.closeOnClick) {
+      this.service.toastDeleted.next(this.toast.id);
+    }
+  }
+
+  onRemove() {
+    clearInterval(this.interval);
+    this.state.toast.isDestroying = true;
+    this.lifecycle(SnotifyAction.beforeDestroy);
+    this.state.toast.isRemoving = true;
+    return new Promise((resolve, reject) => setTimeout(() => resolve(1), this.service.transitionDelay));
+  }
+
+  onShow() {
+    this.state.toast.isShowing = true;
+    this.lifecycle(SnotifyAction.onInit);
+  }
+
+  onMouseEnter() {
+    this.lifecycle(SnotifyAction.onHoverEnter);
+    if (this.toast.config.pauseOnHover) {
+      clearInterval(this.interval);
+    }
+  }
+
+  onMouseLeave() {
+    if (this.toast.config.pauseOnHover && !this.types.prompt) {
+      this.startTimeout(this.state.toast.progress);
+    }
+    this.lifecycle(SnotifyAction.onHoverLeave);
+  }
+
+  // Prompt
+
+  onPromptEnter() {
+    this.state.prompt.isPromptActive = true;
+  }
+
+  onPromptLeave() {
+    if (!this.state.prompt.input.length && !this.state.prompt.isPromptFocused) {
+      this.state.prompt.isPromptActive = false;
+    }
+  }
+
+  /*
+   Common
+   */
   initToast(toast?: SnotifyToast) {
     if (toast) {
       if (this.toast.config.type !== toast.config.type) {
@@ -82,7 +162,6 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
         this.types.info = true;
         break;
       case SnotifyType.ASYNC:
-        this.types.info = true;
         this.types.async = true;
         break;
       case SnotifyType.CONFIRM:
@@ -92,7 +171,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
         this.types.prompt = true;
         break;
       default:
-        this.types.bare = true;
+        this.types.simple = true;
         break;
     }
   }
@@ -101,7 +180,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.types.info =
     this.types.error =
     this.types.warning =
-    this.types.bare =
+    this.types.simple =
     this.types.success =
     this.types.async =
     this.types.confirm =
@@ -109,84 +188,25 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       false;
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => this.onShow(), 50);
-  }
-
-  onClick() {
-    this.lifecycle(SnotifyAction.onClick);
-    if (this.toast.config.closeOnClick) {
-      this.service.remove(this.toast.id, this.onRemove.bind(this));
-      clearInterval(this.interval);
-    }
-  }
-
-  onRemove() {
-    this.lifecycle(SnotifyAction.beforeDestroy);
-    this.render.addClass(this.wrapper.nativeElement, 'snotifyToast-remove');
-  }
-
-  onShow() {
-    this.render.addClass(this.wrapper.nativeElement, 'snotifyToast-show');
-    this.lifecycle(SnotifyAction.onInit);
-  }
-
-  onEnter() {
-    this.lifecycle(SnotifyAction.onHoverEnter);
-    if (this.toast.config.pauseOnHover) {
-      clearInterval(this.interval);
-    }
-  }
-
-  onLeave() {
-    if (this.toast.config.pauseOnHover) {
-      this.startTimeout(this.progress);
-    }
-    this.lifecycle(SnotifyAction.onHoverLeave);
-  }
-
-  onPromptEnter() {
-    this.promptActive = true;
-  }
-
-  onPromptLeave() {
-    if (!this.input.nativeElement.value.length && !this.isPromptFocused) {
-      this.promptActive = false;
-    }
-  }
-
   startTimeout(currentProgress: number) {
-    this.progress = currentProgress;
-    const step = this.frameRate / this.toast.config.timeout * 100;
-    this.zone.runOutsideAngular(() => {
+    if (this.state.toast.isDestroying) {
+      return;
+    }
+    this.state.toast.progress = currentProgress;
+    const step = this.refreshRate / this.toast.config.timeout * 100;
       this.interval = setInterval(() => {
-        this.progress += step;
-        if (this.progress >= 100) {
-          this.zone.run(() => {
-            clearInterval(this.interval);
-            this.service.remove(this.toast.id, this.onRemove.bind(this));
-          });
+        this.state.toast.progress += step;
+        if (this.state.toast.progress >= 100) {
+            this.service.toastDeleted.next(this.toast.id);
         }
-        if (this.toast.config.showProgressBar) {
-          this.drawProgressBar(this.progress);
-        }
-      }, this.frameRate);
-    });
+      }, this.refreshRate);
   }
 
-  drawProgressBar(width: number) {
-    this.render.setStyle(this.progressBar.nativeElement, 'width', width + '%');
-  }
-
-  private lifecycle(action: SnotifyAction) {
+  lifecycle(action: SnotifyAction) {
     return this.service.lifecycle.next({
       action,
       toast: this.toast
     });
-  }
-
-  ngOnDestroy(): void {
-    this.lifecycle(SnotifyAction.afterDestroy);
   }
 
 }

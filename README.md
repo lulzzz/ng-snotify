@@ -108,7 +108,7 @@ export class AppComponent implements OnInit {
 export interface SnotifyConfig {
   timeout?: number; //default: 1500
   showProgressBar?: boolean; //default: true
-  type?: SnotifyType; //depends on toast type [success, error, warning, bare, info]
+  type?: SnotifyType; //default: simple
   closeOnClick?: boolean; //default: true
   pauseOnHover?: boolean; //default: true
 }
@@ -131,13 +131,12 @@ You can call toast by calling one of 5 methods
 * `warning(title: string, body: string, config?: SnotifyConfig)`
 * `info(title: string, body: string, config?: SnotifyConfig)`
 * `error(title: string, body: string, config?: SnotifyConfig)`
-* `bare(title: string, body: string, config?: SnotifyConfig)`
+* `simple(title: string, body: string, config?: SnotifyConfig)`
 ```typescript
 snotifyService.success('Example success!', 'Here we are', {
   timeout: 0, // disable timeout,
   showProgressBar: true, // won't affect because of timeout, if timeout set to 0. Progress Bar cannot exist anymore
   closeOnClick: false
-  // One important thing: it is not recommended to change the type in all methods except the bare
 });
 ```
 

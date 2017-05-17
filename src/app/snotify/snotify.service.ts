@@ -17,6 +17,7 @@ export class SnotifyService {
   readonly lifecycle = new Subject<SnotifyInfo>();
   readonly optionsChanged = new Subject<SnotifyOptions>();
   readonly toastChanged = new Subject<SnotifyToast>();
+  readonly toastDeleted = new Subject<number>();
   readonly transitionDelay = 400;
   private config: SnotifyConfig;
   options: SnotifyOptions;
@@ -36,10 +37,10 @@ export class SnotifyService {
 
   /**
    * Simple is object check.
-   * @param item
+   * @param item {Object<any>}
    * @returns {boolean}
    */
-  static isObject(item) {
+  static isObject(item): boolean {
     return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
   }
 
@@ -76,7 +77,8 @@ export class SnotifyService {
     this.options = {
       newOnTop: true,
       position: SnotifyPosition.right_bottom,
-      maxOnScreen: 8
+      maxOnScreen: 8,
+      transition: 400
     };
   }
 
@@ -107,12 +109,13 @@ export class SnotifyService {
     this.emmit();
   }
 
-  remove(id: number, callback: () => void): void {
-    callback();
-    setTimeout(() => {
+  remove(id: number, animate: boolean = true): void {
+    if (!animate) {
       this.notifications = this.notifications.filter(toast => toast.id !== id);
       this.emmit();
-    }, this.transitionDelay);
+    } else {
+      this.toastDeleted.next(id);
+    }
   }
 
   clear() {
@@ -158,7 +161,7 @@ export class SnotifyService {
     });
   }
 
-  bare(title: string, body: string, config?: SnotifyConfig): number {
+  simple(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
@@ -214,7 +217,7 @@ export class SnotifyService {
       async = action;
     }
 
-    const id = this.bare(title, body, {
+    const id = this.simple(title, body, {
       pauseOnHover: false,
       closeOnClick: false,
       timeout: 0,

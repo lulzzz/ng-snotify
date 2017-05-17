@@ -5,28 +5,42 @@
     'snotify-warning': types.warning,
     'snotify-info': types.info,
     'snotify-error': types.error,
-    'snotify-bare': types.bare,
+    'snotify-simple': types.simple,
+    'snotify-async': types.async,
     'snotify-confirm': types.confirm,
-    'snotify-prompt': types.prompt
+    'snotify-prompt': types.prompt,
+    'snotifyToast-show': state.toast.isShowing,
+    'snotifyToast-remove': state.toast.isRemoving
   }"
-     (click)="onClick()" (mouseenter)="onEnter()" (mouseleave)="onLeave()" #wrapper>
+  [ngStyle]="{'transition': 'transform ' + transitionTime + 'ms, opacity '+transitionTime/2+'ms, max-height ease '+transitionTime+'ms'}"
+  (click)="onClick()" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
   <div class="snotifyToast__inner">
     <div class="snotifyToast__progressBar" *ngIf="toast.config.showProgressBar">
-      <span class="snotifyToast__progressBar__percentage" #progress></span>
+      <span class="snotifyToast__progressBar__percentage" [ngStyle]="{'width': state.toast.progress + '%'}"></span>
     </div>
     <div class="snotifyToast__title">{{toast.title}}</div>
     <div *ngIf="!types.prompt" class="snotifyToast__body">{{toast.body}}</div>
-    <span *ngIf="types.prompt" class="input input--jiro" [ngClass]="{'input--filled': promptActive}" (mouseenter)="onPromptEnter()" (mouseleave)="onPromptLeave()">
-        <input #input class="input__field" type="text" id="input-11" (focus)="isPromptFocused = true" (blur)="isPromptFocused = false"/>
-        <label class="input__label" for="input-11" >
+    <span *ngIf="types.prompt" class="input"
+          [ngClass]="{'input--filled': state.prompt.isPromptActive}"
+          (mouseenter)="onPromptEnter()"
+          (mouseleave)="onPromptLeave()">
+        <input (input)="state.prompt.input = $event.target.value"
+               class="input__field" type="text"
+               [id]="toast.id"
+               (focus)="state.prompt.isPromptFocused = true"
+               (blur)="state.prompt.isPromptFocused = false; onPromptLeave()"/>
+        <label class="input__label" [for]="toast.id">
           <span class="input__labelContent">{{toast.body}}</span>
         </label>
       </span>
     <app-icon class="snotify-icon" [types]="types"></app-icon>
   </div>
   <div *ngIf="toast.config.buttons" class="snotifyToast__buttons">
-    <button *ngIf="!types.prompt"(click)="toast.config.buttons.yes.action()">{{toast.config.buttons.yes.text}}</button>
-    <button *ngIf="types.prompt"(click)="toast.config.buttons.yes.action(input.nativeElement.value)" >{{toast.config.buttons.yes.text}}</button>
-    <button (click)="toast.config.buttons.no.action()">{{toast.config.buttons.no.text}}</button>
+    <button (click)="toast.config.buttons.yes.action(types.prompt ? state.prompt.input : null)">
+      {{toast.config.buttons.yes.text}}
+    </button>
+    <button (click)="toast.config.buttons.no.action()">
+      {{toast.config.buttons.no.text}}
+    </button>
   </div>
 </div>
