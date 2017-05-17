@@ -102,7 +102,7 @@ export class AppComponent implements OnInit {
       pauseOnHover: this.pauseHover
     });
   }
-  onBare() {
+  onSimple() {
     this.setGlobal();
     this.snotifyService.simple(this.title, this.body, {
       timeout: this.timeout,
