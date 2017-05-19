@@ -1,10 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subject} from 'rxjs/Subject';
-import {
-  SnotifyAsync, SnotifyConfig, SnotifyButtons, SnotifyInfo, SnotifyOptions, SnotifyPosition,
-  SnotifyType
-} from './snotify-config';
+import {SnotifyAsync, SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
 import {Snotify} from './snotify';
 import {Observable} from 'rxjs/Observable';
 import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
@@ -18,7 +15,6 @@ export class SnotifyService {
   readonly optionsChanged = new Subject<SnotifyOptions>();
   readonly toastChanged = new Subject<SnotifyToast>();
   readonly toastDeleted = new Subject<number>();
-  readonly transitionDelay = 400;
   private config: SnotifyConfig;
   options: SnotifyOptions;
   private notifications: SnotifyToast[] = [];
@@ -44,27 +40,39 @@ export class SnotifyService {
     return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
   }
 
-  static merge (...objects: any[]) {
-    const newObject = {};
-    let src;
-    const objectsArray = [].splice.call(objects, 0);
+  /**
+   * Deep merge objects.
+   * @param sources {Array<Object>}
+   * @returns {Object<any>}
+   */
+  static mergeDeep(...sources) {
+    const target = {};
+    if (!sources.length) {
+      return target;
+    }
 
-    while (objectsArray.length > 0) {
-      src = objectsArray.splice(0, 1)[0];
-      if (SnotifyService.isObject(src)) {
-        for (const property in src) {
-          if (src.hasOwnProperty(property)) {
-            if (SnotifyService.isObject(src[property])) {
-              newObject[property] = SnotifyService.merge(newObject[property] || {}, src[property]);
+    while (sources.length > 0) {
+      const source = sources.shift();
+      if (SnotifyService.isObject(source)) {
+        for (const key in source) {
+          if (SnotifyService.isObject(source[key])) {
+            target[key] = SnotifyService.mergeDeep(target[key], source[key]);
+          } else if (Array.isArray(source[key])) {
+            if (!target[key]) {
+              Object.assign(target, { [key]: source[key] });
             } else {
-              newObject[property] = src[property];
+              target[key].forEach((value, i) => {
+                target[key][i] = SnotifyService.mergeDeep(value, source[key][i]);
+              });
             }
+          } else {
+            Object.assign(target, { [key]: source[key] });
           }
         }
       }
     }
 
-    return newObject;
+    return target;
   }
 
   constructor() {
@@ -72,7 +80,11 @@ export class SnotifyService {
       showProgressBar: true,
       timeout: 2000,
       closeOnClick: true,
-      pauseOnHover: true
+      pauseOnHover: true,
+      buttons: [
+        {text: 'Ok', action: null, bold: true},
+        {text: 'Cancel', action: null, bold: false},
+      ]
     };
     this.options = {
       newOnTop: true,
@@ -133,7 +145,7 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.SUCCESS})
+      config: Object.assign({}, this.config, config, {type: SnotifyType.SUCCESS})
     });
   }
 
@@ -141,7 +153,7 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.ERROR})
+      config: Object.assign({}, this.config, config, {type: SnotifyType.ERROR})
     });
   }
 
@@ -149,7 +161,7 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.INFO})
+      config: Object.assign({}, this.config, config, {type: SnotifyType.INFO})
     });
   }
 
@@ -157,7 +169,7 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.WARNING})
+      config: Object.assign({}, this.config, config, {type: SnotifyType.WARNING})
     });
   }
 
@@ -165,47 +177,23 @@ export class SnotifyService {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config)
+      config: Object.assign({}, this.config, config)
     });
   }
-  // TODO: Apply defaults if button not set
-  // TODO: Bold - Normal buttons
-  confirm(title: string, body: string, config: SnotifyConfig): number {
-    const buttonKeys = Object.keys(config.buttons);
-    const resultButtons = {
-      yes: {
-        text: buttonKeys[0],
-        action: config.buttons[buttonKeys[0]]
-      },
-      no: {
-        text: buttonKeys[1],
-        action: config.buttons[buttonKeys[1]]
-      }
-    };
+
+  confirm(title: string, body: string, config: SnotifyConfig) {
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.CONFIRM}, {buttons: resultButtons, closeOnClick: false})
+      config: SnotifyService.mergeDeep(this.config, config, {type: SnotifyType.CONFIRM}, {closeOnClick: false})
     });
   }
-  // TODO: Apply defaults if button not set
-  // TODO: Bold - Normal buttons
+
   prompt(title: string, body: string, config: SnotifyConfig): number {
-    const buttonKeys = Object.keys(config.buttons);
-    const resultButtons = {
-      yes: {
-        text: buttonKeys[0],
-        action: config.buttons[buttonKeys[0]]
-      },
-      no: {
-        text: buttonKeys[1],
-        action: config.buttons[buttonKeys[1]]
-      }
-    };
     return this.create({
       title: title,
       body: body,
-      config: Object.assign({}, config, {type: SnotifyType.PROMPT}, {buttons: resultButtons, timeout: 0, closeOnClick: false})
+      config: SnotifyService.mergeDeep(this.config, config, {type: SnotifyType.PROMPT}, {timeout: 0, closeOnClick: false})
     });
   }
 
@@ -230,9 +218,9 @@ export class SnotifyService {
 
     const updateToast = (type: SnotifyType, data?: SnotifyAsync) => {
       if (!data) {
-        latestToast = SnotifyService.merge(toast, latestToast, {config: {type: type}}) as SnotifyToast;
+        latestToast = SnotifyService.mergeDeep(toast, latestToast, {config: {type: type}}) as SnotifyToast;
       } else {
-        latestToast = SnotifyService.merge(toast, data, {config: {type: type}}) as SnotifyToast;
+        latestToast = SnotifyService.mergeDeep(toast, data, {config: {type: type}}) as SnotifyToast;
       }
 
       this.toastChanged.next(latestToast);

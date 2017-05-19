@@ -136,7 +136,7 @@ export class AppComponent implements OnInit {
             }
           });
           observer.complete();
-        }, 30000);
+        }, 5000);
 
           // setTimeout(() => {
           //   observer.error({
@@ -157,10 +157,10 @@ export class AppComponent implements OnInit {
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
       pauseOnHover: this.pauseHover,
-      buttons: {
-        yes: () => console.log('Click: Ok'),
-        'No! Never!': () => console.log('Click: No! Never!'),
-      }
+      buttons: [
+        {text: 'Yes', action: () => console.log('Clicked: Yes'), bold: false},
+        {text: 'No', action: () => console.log('Clicked: No'), bold: true},
+      ]
     });
   }
 
@@ -171,10 +171,10 @@ export class AppComponent implements OnInit {
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
       pauseOnHover: this.pauseHover,
-      buttons: {
-        'OK': (text) => console.log('User said: ' + text),
-        'NO': () => console.log('Click: No! Never!'),
-      }
+      buttons: [
+        {text: 'Yes', action: (text) => console.log('Said Yes: ' + text)},
+        {text: 'No', action: (text) => console.log('Said No: ' + text)},
+      ]
     });
   }
 

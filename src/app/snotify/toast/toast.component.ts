@@ -48,7 +48,6 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.transitionTime = this.service.options.transition;
     this.initToast();
-    console.log(this.types)
     this.service.toastChanged.subscribe(
       (toast: SnotifyToast) => {
         if (this.toast.id === toast.id) {
@@ -92,7 +91,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     this.state.toast.isDestroying = true;
     this.lifecycle(SnotifyAction.beforeDestroy);
     this.state.toast.isRemoving = true;
-    return new Promise((resolve, reject) => setTimeout(() => resolve(1), this.service.transitionDelay));
+    return new Promise((resolve, reject) => setTimeout(resolve, this.service.options.transition));
   }
 
   onShow() {

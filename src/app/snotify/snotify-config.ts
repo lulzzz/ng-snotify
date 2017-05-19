@@ -40,7 +40,7 @@ export interface SnotifyConfig {
   type?: SnotifyType;
   closeOnClick?: boolean;
   pauseOnHover?: boolean;
-  buttons?: SnotifyButtons;
+  buttons?: [SnotifyButton, SnotifyButton] | [SnotifyButton];
 }
 
 export interface SnotifyOptions {
@@ -61,6 +61,9 @@ export interface SnotifyAsync {
   config?: SnotifyConfig;
 }
 
-export interface SnotifyButtons  {
-  [param: string]: (yes?: string) => void;
+
+export interface SnotifyButton {
+  text: string;
+  action?: (text?: string) => void;
+  bold?: boolean;
 }
