@@ -2,7 +2,11 @@ import {Component, ElementRef, OnDestroy, OnInit, Renderer2} from '@angular/core
 import {SnotifyService} from './snotify.service';
 import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subscription} from 'rxjs/Subscription';
-import {SnotifyAction, SnotifyInfo, SnotifyOptions, SnotifyPosition} from './snotify-config';
+import {SnotifyOptions} from './interfaces/SnotifyOptions.interface';
+import {SnotifyInfo} from './interfaces/SnotifyInfo.interface';
+import {SnotifyAction} from './enum/SnotifyAction.enum';
+import {SnotifyPosition} from './enum/SnotifyPosition.enum';
+
 
 @Component({
   selector: 'app-snotify',

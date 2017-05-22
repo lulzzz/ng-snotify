@@ -1,11 +1,16 @@
 import {Injectable} from '@angular/core';
 import {SnotifyToast} from './toast/snotify-toast.model';
 import {Subject} from 'rxjs/Subject';
-import {SnotifyAsync, SnotifyConfig, SnotifyInfo, SnotifyOptions, SnotifyPosition, SnotifyType} from './snotify-config';
-import {Snotify} from './snotify';
 import {Observable} from 'rxjs/Observable';
 import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
 import {Subscription} from 'rxjs/Subscription';
+import {SnotifyInfo} from './interfaces/SnotifyInfo.interface';
+import {SnotifyOptions} from './interfaces/SnotifyOptions.interface';
+import {SnotifyConfig} from './interfaces/SnotifyConfig.interface';
+import {SnotifyAsync} from './interfaces/SnotifyAsync.interface';
+import {Snotify} from './interfaces/Snotify.interface';
+import {SnotifyType} from './enum/SnotifyType.enum';
+import {SnotifyPosition} from './enum/SnotifyPosition.enum';
 
 
 @Injectable()

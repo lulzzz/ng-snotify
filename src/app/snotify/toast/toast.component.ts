@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {SnotifyService} from '../snotify.service';
 import {SnotifyToast} from './snotify-toast.model';
-import {SnotifyAction, SnotifyType} from '../snotify-config';
+import {SnotifyAction} from '../enum/SnotifyAction.enum';
+import {SnotifyType} from '../enum/SnotifyType.enum';
 
 @Component({
   selector: 'app-snotify-toast',
