@@ -16,7 +16,7 @@ export class SnotifyService {
   readonly toastChanged = new Subject<SnotifyToast>();
   readonly toastDeleted = new Subject<number>();
   private config: SnotifyConfig;
-  options: SnotifyOptions;
+  private _options: SnotifyOptions;
   private notifications: SnotifyToast[] = [];
 
   // Callbacks
@@ -86,7 +86,7 @@ export class SnotifyService {
         {text: 'Cancel', action: null, bold: false},
       ]
     };
-    this.options = {
+    this._options = {
       newOnTop: true,
       position: SnotifyPosition.right_bottom,
       maxOnScreen: 8,
@@ -100,8 +100,12 @@ export class SnotifyService {
 
   setConfig(config: SnotifyConfig, options?: SnotifyOptions): void {
     this.config = Object.assign(this.config, config);
-    this.options = Object.assign(this.options, options);
-    this.optionsChanged.next(this.options);
+    this._options = Object.assign(this._options, options);
+    this.optionsChanged.next(this._options);
+  }
+
+  get options(){
+    return this._options;
   }
 
   get(id: number): SnotifyToast {
@@ -113,7 +117,7 @@ export class SnotifyService {
   }
 
   private add(toast: SnotifyToast): void {
-    if (this.options.newOnTop) {
+    if (this._options.newOnTop) {
       this.notifications.unshift(toast);
     } else {
       this.notifications.push(toast);
@@ -121,16 +125,17 @@ export class SnotifyService {
     this.emmit();
   }
 
-  remove(id: number, animate: boolean = true): void {
-    if (!animate) {
+  remove(id?: number, remove?: boolean): void {
+    if (!id) {
+      return this.clear();
+    } else if (remove) {
       this.notifications = this.notifications.filter(toast => toast.id !== id);
-      this.emmit();
-    } else {
-      this.toastDeleted.next(id);
+      return this.emmit();
     }
+    this.toastDeleted.next(id);
   }
 
-  clear() {
+  clear(): void {
     this.notifications = [];
     this.emmit();
   }
@@ -181,7 +186,7 @@ export class SnotifyService {
     });
   }
 
-  confirm(title: string, body: string, config: SnotifyConfig) {
+  confirm(title: string, body: string, config: SnotifyConfig): number {
     return this.create({
       title: title,
       body: body,
@@ -197,7 +202,7 @@ export class SnotifyService {
     });
   }
 
-  async(title: string, body: string, action: Promise<SnotifyAsync> | Observable<SnotifyAsync>) {
+  async(title: string, body: string, action: Promise<SnotifyAsync> | Observable<SnotifyAsync>): number {
     let async: Observable<any>;
     if (action instanceof Promise) {
       async = PromiseObservable.create(action);
@@ -240,6 +245,7 @@ export class SnotifyService {
       }
     );
 
+    return id;
   }
 
 }

@@ -60,7 +60,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       (id) => {
         if (this.toast.id === id) {
           this.onRemove().then(() => {
-            this.service.remove(id, false);
+            this.service.remove(id, true);
           });
         }
       }
@@ -82,7 +82,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   onClick() {
     this.lifecycle(SnotifyAction.onClick);
     if (this.toast.config.closeOnClick) {
-      this.service.toastDeleted.next(this.toast.id);
+      this.service.remove(this.toast.id);
     }
   }
 
@@ -196,7 +196,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       this.interval = setInterval(() => {
         this.state.toast.progress += step;
         if (this.state.toast.progress >= 100) {
-            this.service.toastDeleted.next(this.toast.id);
+            this.service.remove(this.toast.id);
         }
       }, this.refreshRate);
   }

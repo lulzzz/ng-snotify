@@ -166,14 +166,14 @@ export class AppComponent implements OnInit {
 
   onPrompt() {
     this.setGlobal();
-    this.snotifyService.prompt(this.title, this.body, {
+    const id = this.snotifyService.prompt(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
       closeOnClick: this.closeClick,
       pauseOnHover: this.pauseHover,
       buttons: [
         {text: 'Yes', action: (text) => console.log('Said Yes: ' + text)},
-        {text: 'No', action: (text) => console.log('Said No: ' + text)},
+        {text: 'No', action: (text) => { console.log('Said No: ' + text); this.snotifyService.remove(id); }},
       ]
     });
   }
