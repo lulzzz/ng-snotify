@@ -3,6 +3,7 @@ import {SnotifyService} from '../snotify.service';
 import {SnotifyToast} from './snotify-toast.model';
 import {SnotifyAction} from '../enum/SnotifyAction.enum';
 import {SnotifyType} from '../enum/SnotifyType.enum';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-snotify-toast',
@@ -11,6 +12,10 @@ import {SnotifyType} from '../enum/SnotifyType.enum';
 })
 export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() toast: SnotifyToast;
+
+  toastDeletedSubscription: Subscription;
+  toastChangedSubscription: Subscription;
+
   state = {
     toast: {
       progress: 0,
@@ -46,10 +51,13 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
   Life cycles
    */
 
+  /**
+   * Init base options. Subscribe to toast changed, toast deleted
+   */
   ngOnInit() {
     this.transitionTime = this.service.options.transition;
     this.initToast();
-    this.service.toastChanged.subscribe(
+    this.toastChangedSubscription = this.service.toastChanged.subscribe(
       (toast: SnotifyToast) => {
         if (this.toast.id === toast.id) {
           this.initToast(toast);
@@ -57,7 +65,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.service.toastDeleted.subscribe(
+    this.toastDeletedSubscription = this.service.toastDeleted.subscribe(
       (id) => {
         if (this.toast.id === id) {
           this.onRemove().then(() => {
@@ -68,18 +76,29 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  /**
+   * Delay on toast show
+   */
   ngAfterViewInit() {
     setTimeout(() => this.onShow(), 50);
   }
 
+  /**
+   * Unsubscribe subscriptions
+   */
   ngOnDestroy(): void {
     this.lifecycle(SnotifyAction.afterDestroy);
+    this.toastChangedSubscription.unsubscribe();
+    this.toastDeletedSubscription.unsubscribe();
   }
 
   /*
   Event hooks
    */
 
+  /**
+   * Trigger OnClick lifecycle
+   */
   onClick() {
     this.lifecycle(SnotifyAction.onClick);
     if (this.toast.config.closeOnClick) {
@@ -87,6 +106,9 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Trigger beforeDestroy lifecycle. Removes toast
+   */
   onRemove() {
     clearInterval(this.interval);
     this.state.toast.isDestroying = true;
@@ -95,11 +117,17 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     return new Promise((resolve, reject) => setTimeout(resolve, this.service.options.transition));
   }
 
+  /**
+   * Trigger onInit lifecycle
+   */
   onShow() {
     this.state.toast.isShowing = true;
     this.lifecycle(SnotifyAction.onInit);
   }
 
+  /**
+   * Trigger onHoverEnter lifecycle
+   */
   onMouseEnter() {
     this.lifecycle(SnotifyAction.onHoverEnter);
     if (this.toast.config.pauseOnHover) {
@@ -107,6 +135,9 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Trigger onHoverLeave lifecycle
+   */
   onMouseLeave() {
     if (this.toast.config.pauseOnHover && !this.types.prompt) {
       this.startTimeout(this.state.toast.progress);
@@ -116,10 +147,16 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Prompt
 
+  /**
+   * Expand input
+   */
   onPromptEnter() {
     this.state.prompt.isPromptActive = true;
   }
 
+  /**
+   * Collapse input
+   */
   onPromptLeave() {
     if (!this.state.prompt.input.length && !this.state.prompt.isPromptFocused) {
       this.state.prompt.isPromptActive = false;
@@ -128,6 +165,11 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /*
    Common
+   */
+
+  /**
+   * Initialize base toast config
+   * @param toast {SnotifyToast}
    */
   initToast(toast?: SnotifyToast) {
     if (toast) {
@@ -145,6 +187,10 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Setup toast type
+   * @param type {SnotifyType}
+   */
   setType(type: SnotifyType) {
     this.resetTypes();
 
@@ -176,6 +222,9 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Reset toast type
+   */
   resetTypes() {
     this.types.info =
     this.types.error =
@@ -188,6 +237,10 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       false;
   }
 
+  /**
+   * Start progress bar
+   * @param currentProgress {Number}
+   */
   startTimeout(currentProgress: number) {
     if (this.state.toast.isDestroying) {
       return;
@@ -202,6 +255,10 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       }, this.refreshRate);
   }
 
+  /**
+   * Lifesycle trigger
+   * @param action {SnotifyAction}
+   */
   lifecycle(action: SnotifyAction) {
     return this.service.lifecycle.next({
       action,

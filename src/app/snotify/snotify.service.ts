@@ -12,7 +12,9 @@ import {Snotify} from './interfaces/Snotify.interface';
 import {SnotifyType} from './enum/SnotifyType.enum';
 import {SnotifyPosition} from './enum/SnotifyPosition.enum';
 
-
+/**
+ * SnotifyService - create, remove, config toasts
+ */
 @Injectable()
 export class SnotifyService {
   readonly emitter = new Subject<SnotifyToast[]>();
@@ -32,6 +34,10 @@ export class SnotifyService {
   beforeDestroy: (info?: SnotifyToast) => void;
   afterDestroy: (info?: SnotifyToast) => void;
 
+  /**
+   * Generates random id
+   * @return {number}
+   */
   static generateRandomId(): number {
     return Math.floor(Math.random() * (Date.now() - 1)) + 1;
   }
@@ -80,6 +86,9 @@ export class SnotifyService {
     return target;
   }
 
+  /**
+   * Constructor - initialize base configuration objects
+   */
   constructor() {
     this.config = {
       showProgressBar: true,
@@ -99,58 +108,103 @@ export class SnotifyService {
     };
   }
 
-  private emmit(): void {
+  /**
+   * emit changes in notifications array
+   */
+  private emit(): void {
     this.emitter.next(this.getAll());
   }
 
+  /**
+   * Set global config
+   * @param config {SnotifyConfig}
+   * @param options {SnotifyOptions}
+   */
   setConfig(config: SnotifyConfig, options?: SnotifyOptions): void {
     this.config = Object.assign(this.config, config);
     this._options = Object.assign(this._options, options);
     this.optionsChanged.next(this._options);
   }
 
+  /**
+   * get SnotifyOptions
+   * @return {SnotifyOptions}
+   */
   get options(){
     return this._options;
   }
 
+  /**
+   * returns SnotifyToast object
+   * @param id {Number}
+   * @return {undefined|SnotifyToast}
+   */
   get(id: number): SnotifyToast {
     return this.notifications.find(toast => toast.id === id);
   }
 
+  /**
+   * returns copy of notifications array
+   * @return {SnotifyToast[]}
+   */
   private getAll(): SnotifyToast[] {
     return this.notifications.slice();
   }
 
+  /**
+   * add SnotifyToast to notifications array
+   * @param toast {SnotifyToast}
+   */
   private add(toast: SnotifyToast): void {
     if (this._options.newOnTop) {
       this.notifications.unshift(toast);
     } else {
       this.notifications.push(toast);
     }
-    this.emmit();
+    this.emit();
   }
 
+  /**
+   * If ID passed, emits toast animation remove, if ID & REMOVE passed, removes toast from notifications array
+   * @param id {Number}
+   * @param remove {Boolean}
+   */
   remove(id?: number, remove?: boolean): void {
     if (!id) {
       return this.clear();
     } else if (remove) {
       this.notifications = this.notifications.filter(toast => toast.id !== id);
-      return this.emmit();
+      return this.emit();
     }
     this.toastDeleted.next(id);
   }
 
+  /**
+   * Clear notifications array
+   */
   clear(): void {
     this.notifications = [];
-    this.emmit();
+    this.emit();
   }
 
+  /**
+   * Creates toast and add it to array, returns toast id
+   * @param snotify {Snotify}
+   * @return {number}
+   */
   private create(snotify: Snotify): number {
     const id = SnotifyService.generateRandomId();
     this.add(new SnotifyToast(id, snotify.title, snotify.body, snotify.config || null));
     return id;
   }
 
+  /**
+   * Create toast with Success style, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   success(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -159,6 +213,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast with Error style, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   error(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -167,6 +228,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast with Info style, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   info(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -175,6 +243,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast with Warining style, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   warning(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -183,6 +258,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast without style, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   simple(title: string, body: string, config?: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -191,6 +273,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast with Confirm style {with two buttons}, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   confirm(title: string, body: string, config: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -199,6 +288,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Create toast with Prompt style {with two buttons}, returns toast id;
+   * @param title {String}
+   * @param body {String}
+   * @param config {SnotifyConfig}
+   * @return {number}
+   */
   prompt(title: string, body: string, config: SnotifyConfig): number {
     return this.create({
       title: title,
@@ -207,6 +303,13 @@ export class SnotifyService {
     });
   }
 
+  /**
+   * Creates async toast with Info style. Pass action, and resolve or reject it.
+   * @param title {String}
+   * @param body {String}
+   * @param action {Promise<SnotifyAsync> | Observable<SnotifyAsync>}
+   * @return {number}
+   */
   async(title: string, body: string, action: Promise<SnotifyAsync> | Observable<SnotifyAsync>): number {
     let async: Observable<any>;
     if (action instanceof Promise) {

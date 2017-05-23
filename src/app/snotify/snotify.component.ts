@@ -16,13 +16,18 @@ import {SnotifyPosition} from './enum/SnotifyPosition.enum';
 export class SnotifyComponent implements OnInit, OnDestroy {
   notifications: SnotifyToast[];
   emitter: Subscription;
+  optionsSubscription: Subscription;
+  lifecycleSubscription: Subscription;
   dockSize_a: number;
   dockSize_b: number | undefined;
   constructor(private service: SnotifyService, private render: Renderer2, private snotify: ElementRef) { }
 
+  /**
+   * Init base options. Subscribe to options, lifecycle change
+   */
   ngOnInit() {
     this.setOptions(this.service.options);
-    this.service.optionsChanged.subscribe((options: SnotifyOptions) => {
+    this.optionsSubscription = this.service.optionsChanged.subscribe((options: SnotifyOptions) => {
       this.setOptions(options);
     });
     this.setPosition(this.service.options.position);
@@ -30,7 +35,7 @@ export class SnotifyComponent implements OnInit, OnDestroy {
     this.emitter = this.service.emitter.subscribe(
       (toasts: SnotifyToast[]) => this.notifications = toasts
     );
-    this.service.lifecycle.subscribe(
+    this.lifecycleSubscription = this.service.lifecycle.subscribe(
       (info: SnotifyInfo) => {
         switch (info.action) {
           case SnotifyAction.onInit:
@@ -69,7 +74,11 @@ export class SnotifyComponent implements OnInit, OnDestroy {
 
   }
 
-  setOptions(options: SnotifyOptions) {
+  /**
+   * Setup global options object
+   * @param options {SnotifyOptions}
+   */
+  setOptions(options: SnotifyOptions): void {
     if (this.service.options.newOnTop) {
       this.dockSize_a = -options.maxOnScreen;
       this.dockSize_b = undefined;
@@ -81,7 +90,11 @@ export class SnotifyComponent implements OnInit, OnDestroy {
     this.setPosition(options.position);
   }
 
-  setPosition(position: SnotifyPosition) {
+  /**
+   * Setup notifications position
+   * @param position {SnotifyPosition}
+   */
+  setPosition(position: SnotifyPosition): void {
     this.render.removeAttribute(this.snotify.nativeElement, 'class');
       switch (position) {
         case SnotifyPosition.left_top:
@@ -114,9 +127,13 @@ export class SnotifyComponent implements OnInit, OnDestroy {
       }
   }
 
-
+  /**
+   * Unsubscribe subscriptions
+   */
   ngOnDestroy() {
     this.emitter.unsubscribe();
+    this.optionsSubscription.unsubscribe();
+    this.lifecycleSubscription.unsubscribe();
   }
 
 }
