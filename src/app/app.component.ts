@@ -31,26 +31,27 @@ export class AppComponent implements OnInit {
 
     this.snotifyService.onInit = (toast: SnotifyToast) => {
       console.log('on Init', toast);
+      /*
+       At each callback you can change toast data directly.
+       toast.title = "New Title"
+       toast.body = "Some new value"
+       */
     };
 
     this.snotifyService.onHoverEnter = (toast: SnotifyToast) => {
       console.log('Hover enter', toast);
-      toast.body = 'Hover enter';
     };
 
     this.snotifyService.onHoverLeave = (toast: SnotifyToast) => {
       console.log('Hover leave', toast);
-      toast.body = 'Hover leave';
     };
 
     this.snotifyService.onClick = (toast: SnotifyToast) => {
       console.log('Clicked', toast);
-      toast.body = 'Clicked';
     };
 
     this.snotifyService.beforeDestroy = (toast: SnotifyToast) => {
       console.log('Before Destroy', toast);
-      toast.body = 'Before Destory';
     };
 
     this.snotifyService.afterDestroy = (toast: SnotifyToast) => {
@@ -58,6 +59,9 @@ export class AppComponent implements OnInit {
     };
   }
 
+  /*
+  Change global configuration
+   */
   setGlobal() {
     this.snotifyService.setConfig(null, {
       newOnTop: this.newTop,
@@ -114,6 +118,12 @@ export class AppComponent implements OnInit {
 
   onAsyncLoading() {
     this.snotifyService.async(this.title, this.body,
+      /*
+      You should pass Promise or Observable of type SnotifyConfig to change some data or do some other actions
+      More information how to work with observables:
+      https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/core/operators/create.md
+       */
+
       // new Promise((resolve, reject) => {
       //   setTimeout(() => reject(), 1000);
       //   setTimeout(() => resolve(), 1500);
@@ -152,6 +162,9 @@ export class AppComponent implements OnInit {
 
   onConfirmation() {
     this.setGlobal();
+    /*
+    Here we pass an buttons array, which contains of 2 element of type SnotifyButton
+     */
     this.snotifyService.confirm(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
@@ -166,6 +179,11 @@ export class AppComponent implements OnInit {
 
   onPrompt() {
     this.setGlobal();
+    /*
+     Here we pass an buttons array, which contains of 2 element of type SnotifyButton
+     At the action of the first button we can get what user entered into input field.
+     At the second we can't get it. But we can remove this toast
+     */
     const id = this.snotifyService.prompt(this.title, this.body, {
       timeout: this.timeout,
       showProgressBar: this.progressBar,
