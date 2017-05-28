@@ -140,7 +140,7 @@ All toast methods return `id`, so you can remove toast by calling `snotifyServic
 
 If you call `snotifyService. remove()` without id, it will affect all toasts, the same is `snotifyService.clear()`
 
-######Here is an example
+###### Here is an example
 ```typescript
 const id = snotifyService.simple('Example title!', 'Example body message', {
       timeout: 0, // disable timeout,
@@ -183,3 +183,5 @@ Go to develop branch and use angular-cli
 ## License
 
 MIT © [artemsky](mailto:mr.artemsky@gmail.com)
+
+

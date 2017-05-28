@@ -117,6 +117,7 @@ export class AppComponent implements OnInit {
   }
 
   onAsyncLoading() {
+    this.setGlobal();
     this.snotifyService.async(this.title, this.body,
       /*
       You should pass Promise or Observable of type SnotifyConfig to change some data or do some other actions
