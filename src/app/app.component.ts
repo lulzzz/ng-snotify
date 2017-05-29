@@ -193,7 +193,8 @@ export class AppComponent implements OnInit {
       buttons: [
         {text: 'Yes', action: (text) => console.log('Said Yes: ' + text)},
         {text: 'No', action: (text) => { console.log('Said No: ' + text); this.snotifyService.remove(id); }},
-      ]
+      ],
+      placeholder: 'This is the example placeholder which you can pass' // Max-length = 40
     });
   }
 

@@ -19,7 +19,7 @@
       <span class="snotifyToast__progressBar__percentage" [ngStyle]="{'width': state.toast.progress + '%'}"></span>
     </div>
     <div class="snotifyToast__title">{{toast.title}}</div>
-    <div *ngIf="!types.prompt" class="snotifyToast__body">{{toast.body}}</div>
+    <div class="snotifyToast__body">{{toast.body}}</div>
     <span *ngIf="types.prompt" class="input"
           [ngClass]="{'input--filled': state.prompt.isPromptActive}"
           (mouseenter)="onPromptEnter()"
@@ -30,7 +30,7 @@
                (focus)="state.prompt.isPromptFocused = true"
                (blur)="state.prompt.isPromptFocused = false; onPromptLeave()"/>
         <label class="input__label" [for]="toast.id">
-          <span class="input__labelContent">{{toast.body}}</span>
+          <span class="input__labelContent">{{toast.config.placeholder | truncate}}</span>
         </label>
       </span>
     <app-icon class="snotify-icon" [types]="types"></app-icon>

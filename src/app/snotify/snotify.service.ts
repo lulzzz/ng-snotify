@@ -98,7 +98,8 @@ export class SnotifyService {
       buttons: [
         {text: 'Ok', action: null, bold: true},
         {text: 'Cancel', action: null, bold: false},
-      ]
+      ],
+      placeholder: 'Enter answer here...'
     };
     this._options = {
       newOnTop: true,
