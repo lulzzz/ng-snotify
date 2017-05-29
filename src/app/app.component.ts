@@ -19,6 +19,10 @@ export class AppComponent implements OnInit {
   newTop = true;
   dockMax = 6;
   pauseHover = true;
+  maxHeight = 300;
+  titleMaxLength = 15;
+  bodyMaxLength = 80;
+
   constructor(private snotifyService: SnotifyService) {}
 
   ngOnInit() {
@@ -66,10 +70,14 @@ export class AppComponent implements OnInit {
   Change global configuration
    */
   setGlobal() {
-    this.snotifyService.setConfig(null, {
+    this.snotifyService.setConfig({
+      bodyMaxLength: this.bodyMaxLength,
+      titleMaxLength: this.titleMaxLength
+    }, {
       newOnTop: this.newTop,
       position: this.position,
-      maxOnScreen: this.dockMax
+      maxOnScreen: this.dockMax,
+      maxHeight: this.maxHeight
     });
   }
 

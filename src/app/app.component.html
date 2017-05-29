@@ -9,9 +9,27 @@
     <label for="body">Body</label>
     <textarea [(ngModel)]="body" id="body" rows="3" class="form-control"></textarea>
   </div>
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="form-group">
+        <label for="titlemaxlen">Title max-length</label>
+        <input [(ngModel)]="titleMaxLength" type="text" id="titlemaxlen" class="form-control">
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div class="form-group">
+        <label for="bodymaxlen">Body max-length</label>
+        <input [(ngModel)]="bodyMaxLength" type="text" id="bodymaxlen" class="form-control">
+      </div>
+    </div>
+  </div>
   <div class="form-group">
     <label for="timeout">Timeout</label>
     <input [(ngModel)]="timeout" type="number" id="timeout" class="form-control">
+  </div>
+  <div class="form-group">
+    <label for="maxheight">Toast max-height</label>
+    <input [(ngModel)]="maxHeight" type="number" id="maxheight" class="form-control">
   </div>
   <div class="form-group">
     <label for="position">Position</label>
