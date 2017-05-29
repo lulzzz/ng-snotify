@@ -23,7 +23,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.snotifyService.setConfig({
-      timeout: 3000
+      timeout: 3000,
+      titleMaxLength: 14,
+      bodyMaxLength: 40
     }, {
       newOnTop: false,
       position: this.position,

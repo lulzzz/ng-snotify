@@ -37,4 +37,14 @@ export interface SnotifyConfig {
    * Default: 'Enter answer here...'
    */
   placeholder?: string;
+  /**
+   * Toast title maximum length
+   * Default: 16
+   */
+  titleMaxLength?: number;
+  /**
+   * Toast body maximum length
+   * Default: 150
+   */
+  bodyMaxLength?: number;
 }

@@ -99,7 +99,9 @@ export class SnotifyService {
         {text: 'Ok', action: null, bold: true},
         {text: 'Cancel', action: null, bold: false},
       ],
-      placeholder: 'Enter answer here...'
+      placeholder: 'Enter answer here...',
+      bodyMaxLength: 150,
+      titleMaxLength: 16
     };
     this._options = {
       newOnTop: true,
