@@ -184,4 +184,18 @@ Go to develop branch and use angular-cli
 
 MIT © [artemsky](mailto:mr.artemsky@gmail.com)
 
+## Change Log
 
+### v1.1.2
+
+- fix async toast ([#8](https://github.com/artemsky/ng-snotify/issues/8))
+- add `truncate` pipe
+- add toast `titleMaxLeght` and `bodyMaxLeght` to `SnotifyConfig`
+- add toast `maxHeight` to `SnotifyOptions` ([#7](https://github.com/artemsky/ng-snotify/issues/7))
+- add body to **prompt** type and replace input preview text wih new option `placeholder` of `SnotifyConfig` type
+
+- First release
+
+### v1.0.0
+
+- First release
