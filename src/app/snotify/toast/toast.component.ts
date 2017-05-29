@@ -197,6 +197,7 @@ export class ToastComponent implements OnInit, AfterViewInit, OnDestroy {
       this.startTimeout(0);
     } else {
       this.toast.config.showProgressBar = false;
+      this.toast.config.pauseOnHover = false;
     }
   }
 
