@@ -12,7 +12,10 @@
     'snotifyToast-show': state.toast.isShowing,
     'snotifyToast-remove': state.toast.isRemoving
   }"
-  [ngStyle]="{'transition': 'transform ' + transitionTime + 'ms, opacity '+transitionTime/2+'ms, max-height ease '+transitionTime+'ms'}"
+  [ngStyle]="{
+  'transition': 'transform ' + transitionTime + 'ms, opacity '+transitionTime/2+'ms, max-height ease '+transitionTime+'ms',
+  'max-height': maxHeight + 'px'
+  }"
   (click)="onClick()" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
   <div class="snotifyToast__inner">
     <div class="snotifyToast__progressBar" *ngIf="toast.config.showProgressBar">

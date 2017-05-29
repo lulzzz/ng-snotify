@@ -26,7 +26,8 @@ export class AppComponent implements OnInit {
       timeout: 3000
     }, {
       newOnTop: false,
-      position: this.position
+      position: this.position,
+      maxHeight: 500
     });
 
     this.snotifyService.onInit = (toast: SnotifyToast) => {

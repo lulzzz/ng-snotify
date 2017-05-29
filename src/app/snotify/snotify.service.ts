@@ -105,7 +105,8 @@ export class SnotifyService {
       newOnTop: true,
       position: SnotifyPosition.right_bottom,
       maxOnScreen: 8,
-      transition: 400
+      transition: 400,
+      maxHeight: 300
     };
   }
 
